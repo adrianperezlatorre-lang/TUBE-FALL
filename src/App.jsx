@@ -16,6 +16,7 @@ import TimeTrial from './components/TimeTrial.jsx';
 import InfinityMode from './components/InfinityMode.jsx';
 import InfinityGame from './components/InfinityGame.jsx';
 import LevelTransition from './components/LevelTransition.jsx';
+import Tutorial, { isTutorialDone } from './components/Tutorial.jsx';
 
 const VIEW = {
   LOBBY: 'LOBBY',
@@ -31,6 +32,7 @@ const VIEW = {
 
 export default function App() {
   const { loaded } = usePersistence();
+  const [showTutorial, setShowTutorial] = useState(!isTutorialDone());
   const [view, setView] = useState(VIEW.LOBBY);
   const [shopOpen, setShopOpen] = useState(false);
   const [currentLevelId, setCurrentLevelId] = useState(1);
@@ -102,7 +104,11 @@ export default function App() {
 
   return (
     <>
-      {view === VIEW.LOBBY && (
+      {showTutorial && (
+        <Tutorial onComplete={() => setShowTutorial(false)} />
+      )}
+
+      {view === VIEW.LOBBY && !showTutorial && (
         <Lobby
           onPlay={startLevel}
           onOpenShop={() => setShopOpen(true)}
