@@ -132,7 +132,7 @@ export function checkCollisions(ball, obstacles, gemPositions, collectedGems) {
       const gem = gemPositions[i];
       const dx = ball.x - gem.x;
       const dy = ball.y - gem.y;
-      if (dx * dx + dy * dy < (ball.radius + 14) * (ball.radius + 14)) {
+      if (dx * dx + dy * dy < (ball.radius + 22) * (ball.radius + 22)) {
         result.collected.push(i);
       }
     }
