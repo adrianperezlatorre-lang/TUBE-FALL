@@ -738,7 +738,11 @@ export const LEVELS = [
     ],
   },
 
-  // --- LEVEL 21 — Introduces Fan: float through spike corridor ---
+
+  // --- LEVEL 21 — Introduces Fan: the only way through is floating ---
+  // A long fan zone IS the path. Spikes narrow both sides so you MUST
+  // float slowly through, drifting left-right to weave through gaps.
+  // Without low gravity you fall too fast to navigate.
   {
     id: 21,
     color: '#FF6B9D',
@@ -746,31 +750,35 @@ export const LEVELS = [
     gems: 5,
     bonusGems: 3,
     obstacles: [
-      { type: 'spike', y: 200, wall: 'left', depth: 40 },
-      { type: 'spike', y: 320, wall: 'right', depth: 40 },
-      // Fan zone y=400..750 — MUST use to navigate alternating spikes
-      { type: 'fan', y: 750, fanHeight: 350, gravityMult: 0.25 },
-      { type: 'spike', y: 450, wall: 'right', depth: 65 },
-      { type: 'spike', y: 550, wall: 'left', depth: 65 },
-      { type: 'spike', y: 650, wall: 'right', depth: 65 },
-      // After fan zone
-      { type: 'platform', y: 900, width: 110 },
-      { type: 'spike', y: 1050, wall: 'both', depth: 35 },
-      { type: 'blocker', y: 1200, speed: 1.5, gapSide: 'center', width: 100 },
-      { type: 'spike', y: 1400, wall: 'left', depth: 45 },
-      { type: 'spike', y: 1550, wall: 'right', depth: 45 },
-      { type: 'platform', y: 1700, width: 110 },
+      { type: 'spike', y: 180, wall: 'left', depth: 40 },
+      { type: 'platform', y: 280, width: 110 },
+      { type: 'spike', y: 380, wall: 'right', depth: 40 },
+      // === FAN ZONE: the mandatory path ===
+      // Both walls spike inward — only way through is slow floating
+      { type: 'fan', y: 900, fanHeight: 350, gravityMult: 0.2 },
+      { type: 'spike', y: 600, wall: 'left', depth: 80 },
+      { type: 'spike', y: 700, wall: 'right', depth: 80 },
+      { type: 'spike', y: 800, wall: 'left', depth: 80 },
+      // After fan — easy finish
+      { type: 'platform', y: 1050, width: 120 },
+      { type: 'spike', y: 1200, wall: 'right', depth: 40 },
+      { type: 'spike', y: 1350, wall: 'left', depth: 40 },
+      { type: 'blocker', y: 1500, speed: 1.4, gapSide: 'center', width: 100 },
+      { type: 'platform', y: 1650, width: 120 },
     ],
     gemPositions: [
-      { x: TL + 40, y: 500 },
-      { x: TR - 40, y: 600 },
-      { x: TL + 40, y: 700 },
-      { x: CX, y: 1100 },
-      { x: CX + 30, y: 1450 },
+      { x: CX, y: 250 },
+      { x: TR - 30, y: 620 },
+      { x: TL + 30, y: 720 },
+      { x: TR - 30, y: 820 },
+      { x: CX, y: 1400 },
     ],
   },
 
-  // --- LEVEL 22 — Introduces Tube: teleport past spike wall ---
+  // --- LEVEL 22 — Introduces Tube: fall in, get redirected ---
+  // Tubes are the ONLY way past spike walls that block the full width.
+  // You fall into the tube opening and it transports you to the other side.
+  // Like Fall Guys vacuum tubes — one-way mandatory transport.
   {
     id: 22,
     color: '#FF9F43',
@@ -778,33 +786,37 @@ export const LEVELS = [
     gems: 5,
     bonusGems: 3,
     obstacles: [
-      { type: 'spike', y: 200, wall: 'right', depth: 40 },
-      { type: 'blocker', y: 350, speed: 1.5, gapSide: 'center', width: 100 },
-      // Spike wall blocks path — MUST use tube to pass
-      { type: 'spike', y: 550, wall: 'left', depth: 80 },
-      { type: 'spike', y: 550, wall: 'right', depth: 80 },
-      { type: 'tube', y: 480, entryX: CX, exitX: CX, exitY: 680 },
-      // Continue after tube exit
-      { type: 'spike', y: 800, wall: 'left', depth: 45 },
-      { type: 'platform', y: 920, width: 100 },
-      // Second tube bypass
-      { type: 'spike', y: 1100, wall: 'left', depth: 85 },
-      { type: 'spike', y: 1100, wall: 'right', depth: 85 },
-      { type: 'tube', y: 1020, entryX: TR - 40, exitX: TL + 40, exitY: 1220 },
-      { type: 'spike', y: 1350, wall: 'right', depth: 45 },
-      { type: 'blocker', y: 1500, speed: 1.4, gapSide: 'center', width: 100 },
-      { type: 'platform', y: 1650, width: 110 },
+      { type: 'spike', y: 180, wall: 'right', depth: 40 },
+      { type: 'platform', y: 300, width: 110 },
+      { type: 'spike', y: 420, wall: 'left', depth: 45 },
+      // === TUBE 1: right side in, left side out ===
+      // Full spike wall below — tube is the ONLY way through
+      { type: 'tube', y: 560, entryX: TR - 40, exitX: TL + 40, exitY: 760 },
+      { type: 'spike', y: 650, wall: 'left', depth: 100 },
+      { type: 'spike', y: 650, wall: 'right', depth: 100 },
+      // Safe zone after tube 1
+      { type: 'platform', y: 900, width: 110 },
+      { type: 'spike', y: 1000, wall: 'right', depth: 45 },
+      // === TUBE 2: left side in, right side out ===
+      { type: 'tube', y: 1100, entryX: TL + 40, exitX: TR - 40, exitY: 1300 },
+      { type: 'spike', y: 1200, wall: 'left', depth: 100 },
+      { type: 'spike', y: 1200, wall: 'right', depth: 100 },
+      // Finish
+      { type: 'spike', y: 1450, wall: 'left', depth: 40 },
+      { type: 'platform', y: 1600, width: 120 },
     ],
     gemPositions: [
-      { x: CX, y: 150 },
-      { x: CX, y: 630 },
-      { x: TL + 40, y: 1170 },
-      { x: CX, y: 1400 },
-      { x: CX, y: 1550 },
+      { x: CX, y: 250 },
+      { x: TR - 40, y: 520 },
+      { x: TL + 40, y: 810 },
+      { x: TL + 40, y: 1060 },
+      { x: TR - 40, y: 1350 },
     ],
   },
 
-  // --- LEVEL 23 — Introduces Trampoline: bounce up to reach platform ---
+  // --- LEVEL 23 — Introduces Trampoline: bounce up to continue ---
+  // Like BoomTrix: trampoline IS the path. You fall onto it, bounce up
+  // to a platform that's the only way forward. No trampoline = dead end.
   {
     id: 23,
     color: '#FECA57',
@@ -812,34 +824,41 @@ export const LEVELS = [
     gems: 5,
     bonusGems: 3,
     obstacles: [
-      { type: 'spike', y: 200, wall: 'left', depth: 40 },
-      { type: 'blocker', y: 350, speed: 1.5, gapSide: 'right', width: 100 },
-      { type: 'spike', y: 500, wall: 'right', depth: 45 },
-      // Trampoline bounces you UP to reach the right-side platform
-      { type: 'trampoline', y: 750, width: 90, xPos: TL + 10 },
-      { type: 'platform', y: 600, width: 90, xPos: TR - 100 },
-      // From that platform, roll off right side to continue down
-      { type: 'spike', y: 700, wall: 'left', depth: 70 },
-      { type: 'platform', y: 900, width: 100 },
-      { type: 'spike', y: 1050, wall: 'both', depth: 35 },
-      // Second trampoline section
-      { type: 'trampoline', y: 1300, width: 90, xPos: TR - 100 },
+      { type: 'spike', y: 180, wall: 'left', depth: 40 },
+      { type: 'blocker', y: 320, speed: 1.4, gapSide: 'center', width: 100 },
+      { type: 'spike', y: 460, wall: 'right', depth: 45 },
+      // === TRAMPOLINE 1: bounces you up to right platform ===
+      // Left side is all spikes — you MUST bounce up to the right platform
+      { type: 'trampoline', y: 700, width: 100, xPos: TL + 10 },
+      { type: 'spike', y: 650, wall: 'right', depth: 70 },
+      { type: 'platform', y: 550, width: 90, xPos: TR - 100 },
+      // Fall from right platform past the spike
+      { type: 'spike', y: 750, wall: 'left', depth: 70 },
+      { type: 'platform', y: 900, width: 120 },
+      { type: 'spike', y: 1020, wall: 'both', depth: 35 },
+      // === TRAMPOLINE 2: bounces you up to left platform ===
+      { type: 'trampoline', y: 1250, width: 100, xPos: TR - 110 },
+      { type: 'spike', y: 1200, wall: 'left', depth: 70 },
       { type: 'platform', y: 1100, width: 90, xPos: TL + 10 },
-      { type: 'spike', y: 1200, wall: 'right', depth: 70 },
-      { type: 'blocker', y: 1450, speed: 1.5, gapSide: 'center', width: 100 },
-      { type: 'spike', y: 1600, wall: 'left', depth: 45 },
-      { type: 'platform', y: 1750, width: 110 },
+      { type: 'spike', y: 1300, wall: 'right', depth: 70 },
+      // Finish
+      { type: 'platform', y: 1450, width: 120 },
+      { type: 'spike', y: 1600, wall: 'left', depth: 40 },
+      { type: 'platform', y: 1750, width: 120 },
     ],
     gemPositions: [
-      { x: TR - 50, y: 560 },
-      { x: CX, y: 850 },
+      { x: CX, y: 250 },
+      { x: TR - 50, y: 510 },
+      { x: CX, y: 860 },
       { x: TL + 50, y: 1060 },
-      { x: CX, y: 1400 },
-      { x: CX, y: 1650 },
+      { x: CX, y: 1550 },
     ],
   },
 
-  // --- LEVEL 24 — Introduces Magnet: get pulled to safety ---
+  // --- LEVEL 24 — Introduces Magnet: pulls you into the safe path ---
+  // Like Magnetic Pull game: magnets curve your trajectory through gaps.
+  // Spikes narrow the path on one side, magnet pulls you to the safe side.
+  // Without the magnet's pull you'd miss the gap.
   {
     id: 24,
     color: '#48DBFB',
@@ -847,256 +866,322 @@ export const LEVELS = [
     gems: 5,
     bonusGems: 3,
     obstacles: [
-      { type: 'spike', y: 200, wall: 'left', depth: 45 },
-      { type: 'blocker', y: 350, speed: 1.5, gapSide: 'center', width: 100 },
-      // Magnet on right pulls you toward the safe gap
-      { type: 'spike', y: 550, wall: 'left', depth: 75 },
-      { type: 'magnet', y: 520, xPos: TR - 30, radius: 100, strength: 0.18 },
-      { type: 'spike', y: 700, wall: 'right', depth: 45 },
-      { type: 'platform', y: 850, width: 100 },
-      // Magnet on left pulls you through tight gap
-      { type: 'spike', y: 1050, wall: 'right', depth: 75 },
-      { type: 'magnet', y: 1020, xPos: TL + 30, radius: 100, strength: 0.18 },
-      { type: 'spike', y: 1200, wall: 'left', depth: 45 },
-      { type: 'blocker', y: 1350, speed: 1.5, gapSide: 'center', width: 100 },
-      { type: 'spike', y: 1500, wall: 'both', depth: 35 },
-      { type: 'platform', y: 1650, width: 110 },
-      { type: 'spike', y: 1800, wall: 'right', depth: 40 },
+      { type: 'spike', y: 180, wall: 'left', depth: 45 },
+      { type: 'platform', y: 300, width: 110 },
+      { type: 'spike', y: 420, wall: 'right', depth: 45 },
+      // === MAGNET 1: pulls you RIGHT past left spikes ===
+      { type: 'magnet', y: 600, xPos: TR - 25, radius: 120, strength: 0.22 },
+      { type: 'spike', y: 580, wall: 'left', depth: 90 },
+      { type: 'spike', y: 680, wall: 'left', depth: 90 },
+      // Safe on right side
+      { type: 'platform', y: 820, width: 110 },
+      // === MAGNET 2: pulls you LEFT past right spikes ===
+      { type: 'magnet', y: 1000, xPos: TL + 25, radius: 120, strength: 0.22 },
+      { type: 'spike', y: 980, wall: 'right', depth: 90 },
+      { type: 'spike', y: 1080, wall: 'right', depth: 90 },
+      // Safe on left side
+      { type: 'platform', y: 1220, width: 110 },
+      // === MAGNET 3: pulls you to center ===
+      { type: 'magnet', y: 1400, xPos: CX, radius: 100, strength: 0.2 },
+      { type: 'spike', y: 1380, wall: 'left', depth: 70 },
+      { type: 'spike', y: 1380, wall: 'right', depth: 70 },
+      // Finish
+      { type: 'platform', y: 1550, width: 120 },
+      { type: 'spike', y: 1700, wall: 'both', depth: 35 },
     ],
     gemPositions: [
-      { x: TR - 40, y: 500 },
-      { x: CX, y: 750 },
-      { x: TL + 40, y: 980 },
-      { x: CX, y: 1400 },
-      { x: CX, y: 1700 },
+      { x: CX, y: 250 },
+      { x: TR - 30, y: 560 },
+      { x: CX, y: 770 },
+      { x: TL + 30, y: 960 },
+      { x: CX, y: 1350 },
     ],
   },
 
-  // --- LEVEL 25 — Introduces Bounce: bounce pad sends you up ---
+  // --- LEVEL 25 — Introduces Bounce: redirects you upward ---
+  // Like Sonic springs: the bounce pad launches you to an otherwise
+  // unreachable platform. The only way forward is UP through the bounce.
   {
     id: 25,
     color: '#1DD1A1',
-    height: 1900,
-    gems: 5,
+    height: 2000,
+    gems: 6,
     bonusGems: 3,
     obstacles: [
-      { type: 'spike', y: 200, wall: 'right', depth: 40 },
-      { type: 'spike', y: 350, wall: 'left', depth: 45 },
-      { type: 'platform', y: 500, width: 100 },
-      // Falling into spikes below — bounce pad saves you, sends you back up
-      { type: 'spike', y: 750, wall: 'left', depth: 75 },
-      { type: 'spike', y: 750, wall: 'right', depth: 75 },
-      { type: 'bounce', y: 700, width: 80, factor: 1.5 },
-      // Bounce sends you UP past the platform to the left path
-      { type: 'platform', y: 550, width: 80, xPos: TL + 10 },
-      { type: 'spike', y: 650, wall: 'right', depth: 70 },
-      // Continue down from left platform
-      { type: 'blocker', y: 850, speed: 1.5, gapSide: 'center', width: 100 },
-      { type: 'spike', y: 1000, wall: 'left', depth: 45 },
-      // Another bounce section
-      { type: 'bounce', y: 1200, width: 80, factor: 1.5 },
-      { type: 'spike', y: 1250, wall: 'both', depth: 70 },
-      { type: 'platform', y: 1050, width: 80, xPos: TR - 90 },
-      { type: 'spike', y: 1150, wall: 'left', depth: 70 },
-      { type: 'platform', y: 1400, width: 100 },
-      { type: 'spike', y: 1550, wall: 'right', depth: 45 },
-      { type: 'platform', y: 1750, width: 110 },
+      { type: 'spike', y: 180, wall: 'right', depth: 40 },
+      { type: 'blocker', y: 320, speed: 1.4, gapSide: 'center', width: 100 },
+      { type: 'spike', y: 460, wall: 'left', depth: 45 },
+      { type: 'platform', y: 580, width: 110 },
+      // === BOUNCE 1: sends you UP to a platform above ===
+      // Below is a death wall — bounce is the only escape
+      { type: 'bounce', y: 780, width: 100, factor: 1.5 },
+      { type: 'spike', y: 830, wall: 'left', depth: 100 },
+      { type: 'spike', y: 830, wall: 'right', depth: 100 },
+      // Bounce sends you up to this platform
+      { type: 'platform', y: 620, width: 80, xPos: TL + 10 },
+      { type: 'spike', y: 700, wall: 'right', depth: 75 },
+      // From left platform, fall past spike on left to continue
+      { type: 'spike', y: 800, wall: 'right', depth: 45 },
+      { type: 'platform', y: 950, width: 120 },
+      // === BOUNCE 2: same pattern, opposite side ===
+      { type: 'bounce', y: 1150, width: 100, factor: 1.5 },
+      { type: 'spike', y: 1200, wall: 'left', depth: 100 },
+      { type: 'spike', y: 1200, wall: 'right', depth: 100 },
+      { type: 'platform', y: 990, width: 80, xPos: TR - 90 },
+      { type: 'spike', y: 1070, wall: 'left', depth: 75 },
+      // Continue
+      { type: 'spike', y: 1300, wall: 'left', depth: 45 },
+      { type: 'platform', y: 1450, width: 120 },
+      { type: 'spike', y: 1600, wall: 'right', depth: 40 },
+      { type: 'platform', y: 1800, width: 120 },
     ],
     gemPositions: [
-      { x: TL + 50, y: 510 },
-      { x: CX, y: 750 },
-      { x: TR - 50, y: 1010 },
-      { x: CX, y: 1300 },
-      { x: CX, y: 1600 },
+      { x: CX, y: 250 },
+      { x: CX, y: 540 },
+      { x: TL + 50, y: 590 },
+      { x: TR - 50, y: 960 },
+      { x: CX, y: 1400 },
+      { x: CX, y: 1700 },
     ],
   },
 
-
-  // --- LEVEL 26 — Fan + Tube combo: float into tube entrance ---
+  // --- LEVEL 26 — Fan → Tube chain: float to tube entrance ---
+  // Fan slows you so you can drift into the tube opening.
+  // Tube transports you past the death zone below. Flow: fan → tube → safe zone.
   {
     id: 26,
     color: '#FF6B6B',
-    height: 2000,
-    gems: 6,
-    bonusGems: 4,
-    obstacles: [
-      { type: 'spike', y: 200, wall: 'left', depth: 45 },
-      { type: 'spike', y: 320, wall: 'right', depth: 45 },
-      // Fan zone — float slowly to reach tube entry on left wall
-      { type: 'fan', y: 700, fanHeight: 300, gravityMult: 0.25 },
-      { type: 'spike', y: 480, wall: 'right', depth: 65 },
-      { type: 'spike', y: 580, wall: 'left', depth: 50 },
-      { type: 'tube', y: 650, entryX: TL + 20, exitX: TR - 30, exitY: 850 },
-      { type: 'spike', y: 680, wall: 'right', depth: 65 },
-      // After tube exit
-      { type: 'platform', y: 1000, width: 100 },
-      { type: 'spike', y: 1150, wall: 'both', depth: 40 },
-      { type: 'blocker', y: 1300, speed: 1.5, gapSide: 'center', width: 100 },
-      { type: 'spike', y: 1450, wall: 'left', depth: 50 },
-      { type: 'spike', y: 1600, wall: 'right', depth: 50 },
-      { type: 'platform', y: 1800, width: 110 },
-    ],
-    gemPositions: [
-      { x: TL + 40, y: 500 },
-      { x: TL + 30, y: 620 },
-      { x: TR - 40, y: 900 },
-      { x: CX, y: 1200 },
-      { x: CX, y: 1500 },
-      { x: CX, y: 1750 },
-    ],
-  },
-
-  // --- LEVEL 27 — Trampoline chain: bounce up multiple tiers ---
-  {
-    id: 27,
-    color: '#A29BFE',
-    height: 2100,
-    gems: 6,
-    bonusGems: 4,
-    obstacles: [
-      { type: 'spike', y: 200, wall: 'right', depth: 45 },
-      { type: 'blocker', y: 350, speed: 1.5, gapSide: 'center', width: 100 },
-      { type: 'spike', y: 500, wall: 'left', depth: 50 },
-      // Must land on trampoline, bounce up to platform, roll right
-      { type: 'trampoline', y: 800, width: 80, xPos: TL + 10 },
-      { type: 'platform', y: 620, width: 80, xPos: TR - 90 },
-      { type: 'spike', y: 700, wall: 'left', depth: 75 },
-      // From right platform fall to second trampoline
-      { type: 'trampoline', y: 1050, width: 80, xPos: TR - 90 },
-      { type: 'platform', y: 870, width: 80, xPos: TL + 10 },
-      { type: 'spike', y: 950, wall: 'right', depth: 75 },
-      // From left platform continue
-      { type: 'platform', y: 1200, width: 100 },
-      { type: 'spike', y: 1350, wall: 'both', depth: 35 },
-      { type: 'blocker', y: 1500, speed: 1.8, gapSide: 'center', width: 100 },
-      { type: 'spike', y: 1650, wall: 'left', depth: 50 },
-      { type: 'spike', y: 1800, wall: 'right', depth: 45 },
-      { type: 'platform', y: 1950, width: 110 },
-    ],
-    gemPositions: [
-      { x: TR - 50, y: 580 },
-      { x: TL + 50, y: 830 },
-      { x: CX, y: 1100 },
-      { x: CX, y: 1400 },
-      { x: CX, y: 1700 },
-      { x: CX, y: 1900 },
-    ],
-  },
-
-  // --- LEVEL 28 — Magnet + Spikes: magnet curves you through gaps ---
-  {
-    id: 28,
-    color: '#FDCB6E',
     height: 2100,
     gems: 6,
     bonusGems: 4,
     obstacles: [
       { type: 'spike', y: 180, wall: 'left', depth: 45 },
-      { type: 'pendulum', y: 300, swingSpeed: 2.0 },
-      { type: 'spike', y: 450, wall: 'right', depth: 50 },
-      // Spike corridor with magnets pulling you through safe path
-      { type: 'spike', y: 650, wall: 'left', depth: 80 },
-      { type: 'magnet', y: 630, xPos: TR - 30, radius: 120, strength: 0.2 },
-      { type: 'spike', y: 800, wall: 'right', depth: 80 },
-      { type: 'magnet', y: 780, xPos: TL + 30, radius: 120, strength: 0.2 },
-      { type: 'spike', y: 950, wall: 'left', depth: 80 },
-      { type: 'magnet', y: 930, xPos: TR - 30, radius: 120, strength: 0.2 },
-      // After magnet gauntlet
-      { type: 'platform', y: 1100, width: 100 },
-      { type: 'blocker', y: 1250, speed: 1.5, gapSide: 'center', width: 100 },
-      { type: 'spike', y: 1400, wall: 'left', depth: 45 },
-      { type: 'spike', y: 1550, wall: 'right', depth: 50 },
-      { type: 'vanish', y: 1700, width: 90 },
-      { type: 'spike', y: 1850, wall: 'both', depth: 35 },
-      { type: 'platform', y: 1950, width: 110 },
+      { type: 'blocker', y: 330, speed: 1.6, gapSide: 'center', width: 100 },
+      { type: 'spike', y: 480, wall: 'right', depth: 50 },
+      // === FAN + TUBE combo ===
+      // Fan slows your fall so you can navigate to the tube entrance on the right
+      { type: 'fan', y: 850, fanHeight: 250, gravityMult: 0.22 },
+      { type: 'spike', y: 650, wall: 'left', depth: 70 },
+      { type: 'spike', y: 750, wall: 'left', depth: 70 },
+      // Tube on right wall — float there in the fan, enter tube
+      { type: 'tube', y: 820, entryX: TR - 35, exitX: TL + 40, exitY: 1050 },
+      // Below the fan: death zone
+      { type: 'spike', y: 900, wall: 'left', depth: 100 },
+      { type: 'spike', y: 900, wall: 'right', depth: 100 },
+      // After tube exit on left side
+      { type: 'spike', y: 1150, wall: 'right', depth: 50 },
+      { type: 'platform', y: 1300, width: 120 },
+      // === Second FAN + TUBE ===
+      { type: 'fan', y: 1700, fanHeight: 250, gravityMult: 0.22 },
+      { type: 'spike', y: 1500, wall: 'right', depth: 70 },
+      { type: 'spike', y: 1600, wall: 'right', depth: 70 },
+      { type: 'tube', y: 1670, entryX: TL + 35, exitX: TR - 40, exitY: 1900 },
+      { type: 'spike', y: 1750, wall: 'left', depth: 100 },
+      { type: 'spike', y: 1750, wall: 'right', depth: 100 },
+      // Finish
+      { type: 'platform', y: 2000, width: 120 },
     ],
     gemPositions: [
-      { x: TR - 40, y: 610 },
-      { x: TL + 40, y: 760 },
-      { x: TR - 40, y: 910 },
-      { x: CX, y: 1150 },
-      { x: CX, y: 1450 },
-      { x: CX, y: 1800 },
+      { x: CX, y: 250 },
+      { x: TR - 40, y: 700 },
+      { x: TR - 35, y: 790 },
+      { x: TL + 40, y: 1100 },
+      { x: TL + 35, y: 1550 },
+      { x: TR - 40, y: 1950 },
     ],
   },
 
-  // --- LEVEL 29 — Bounce + Platform puzzle: redirect upward ---
+  // --- LEVEL 27 — Trampoline staircase: bounce up, fall forward ---
+  // Like BoomTrix: chain of trampolines forms a zigzag staircase.
+  // Each trampoline bounces you to a platform, which drops you to the next.
   {
-    id: 29,
-    color: '#6C5CE7',
+    id: 27,
+    color: '#A29BFE',
     height: 2200,
     gems: 6,
     bonusGems: 4,
     obstacles: [
-      { type: 'spike', y: 200, wall: 'right', depth: 40 },
-      { type: 'blocker', y: 350, speed: 1.8, gapSide: 'right', width: 100 },
-      { type: 'spike', y: 500, wall: 'left', depth: 50 },
-      // Path blocked below — bounce sends you up to vanish platform
-      { type: 'bounce', y: 750, width: 90, factor: 1.6 },
-      { type: 'spike', y: 800, wall: 'left', depth: 85 },
-      { type: 'spike', y: 800, wall: 'right', depth: 85 },
-      { type: 'vanish', y: 600, width: 85, xPos: CX - 42 },
-      // From vanish, fall through gap on right
-      { type: 'spike', y: 700, wall: 'left', depth: 70 },
-      { type: 'platform', y: 950, width: 100 },
-      { type: 'spike', y: 1100, wall: 'right', depth: 50 },
-      // Second bounce redirect
-      { type: 'bounce', y: 1350, width: 90, factor: 1.6 },
-      { type: 'spike', y: 1400, wall: 'both', depth: 80 },
-      { type: 'vanish', y: 1200, width: 85, xPos: CX - 42 },
-      { type: 'spike', y: 1300, wall: 'left', depth: 70 },
-      { type: 'platform', y: 1550, width: 100 },
-      { type: 'blocker', y: 1700, speed: 1.5, gapSide: 'center', width: 100 },
-      { type: 'spike', y: 1850, wall: 'both', depth: 35 },
-      { type: 'platform', y: 2050, width: 110 },
+      { type: 'spike', y: 180, wall: 'right', depth: 45 },
+      { type: 'platform', y: 300, width: 110 },
+      { type: 'spike', y: 430, wall: 'left', depth: 50 },
+      // === TRAMPOLINE CHAIN ===
+      // Step 1: fall from center, land on trampoline (left), bounce up to platform (right)
+      { type: 'trampoline', y: 650, width: 90, xPos: TL + 10 },
+      { type: 'platform', y: 500, width: 80, xPos: TR - 90 },
+      { type: 'spike', y: 580, wall: 'right', depth: 60 },
+      { type: 'spike', y: 600, wall: 'left', depth: 70 },
+      // Step 2: fall from right platform, land on trampoline (right), bounce to platform (left)
+      { type: 'trampoline', y: 900, width: 90, xPos: TR - 100 },
+      { type: 'platform', y: 750, width: 80, xPos: TL + 10 },
+      { type: 'spike', y: 830, wall: 'left', depth: 60 },
+      { type: 'spike', y: 850, wall: 'right', depth: 70 },
+      // Step 3: fall from left, land on trampoline (center), bounce to platform above
+      { type: 'trampoline', y: 1150, width: 100 },
+      { type: 'platform', y: 980, width: 100 },
+      { type: 'spike', y: 1080, wall: 'left', depth: 70 },
+      { type: 'spike', y: 1080, wall: 'right', depth: 70 },
+      // Continue from center platform
+      { type: 'spike', y: 1200, wall: 'both', depth: 35 },
+      { type: 'blocker', y: 1400, speed: 1.6, gapSide: 'center', width: 100 },
+      { type: 'spike', y: 1550, wall: 'left', depth: 50 },
+      { type: 'spike', y: 1700, wall: 'right', depth: 50 },
+      { type: 'platform', y: 1850, width: 120 },
+      { type: 'spike', y: 2000, wall: 'both', depth: 35 },
+      { type: 'platform', y: 2100, width: 120 },
     ],
     gemPositions: [
-      { x: CX, y: 580 },
-      { x: TR - 40, y: 730 },
-      { x: CX, y: 1000 },
-      { x: CX, y: 1180 },
-      { x: CX, y: 1600 },
-      { x: CX, y: 1900 },
+      { x: CX, y: 250 },
+      { x: TR - 50, y: 470 },
+      { x: TL + 50, y: 720 },
+      { x: CX, y: 950 },
+      { x: CX, y: 1350 },
+      { x: CX, y: 1800 },
     ],
   },
 
-  // --- LEVEL 30 — Fan corridor + trampoline exit ---
+  // --- LEVEL 28 — Magnet curves: S-shaped path guided by magnets ---
+  // Like pachinko deflectors: magnets create an S-curve through spike maze.
+  // Each magnet curves your trajectory to pass through the one safe gap.
+  {
+    id: 28,
+    color: '#FDCB6E',
+    height: 2200,
+    gems: 6,
+    bonusGems: 4,
+    obstacles: [
+      { type: 'spike', y: 180, wall: 'left', depth: 45 },
+      { type: 'pendulum', y: 320, swingSpeed: 2.0 },
+      { type: 'platform', y: 460, width: 110 },
+      // === MAGNET S-CURVE ===
+      // Magnet 1 (right) pulls you right through gap in left spikes
+      { type: 'magnet', y: 650, xPos: TR - 20, radius: 140, strength: 0.22 },
+      { type: 'spike', y: 620, wall: 'left', depth: 85 },
+      { type: 'spike', y: 720, wall: 'left', depth: 85 },
+      // Magnet 2 (left) pulls you left through gap in right spikes
+      { type: 'magnet', y: 880, xPos: TL + 20, radius: 140, strength: 0.22 },
+      { type: 'spike', y: 850, wall: 'right', depth: 85 },
+      { type: 'spike', y: 950, wall: 'right', depth: 85 },
+      // Magnet 3 (right) pulls you right again
+      { type: 'magnet', y: 1110, xPos: TR - 20, radius: 140, strength: 0.22 },
+      { type: 'spike', y: 1080, wall: 'left', depth: 85 },
+      { type: 'spike', y: 1180, wall: 'left', depth: 85 },
+      // Safe zone
+      { type: 'platform', y: 1320, width: 120 },
+      // Normal finish
+      { type: 'blocker', y: 1470, speed: 1.6, gapSide: 'center', width: 100 },
+      { type: 'spike', y: 1620, wall: 'right', depth: 50 },
+      { type: 'spike', y: 1770, wall: 'left', depth: 50 },
+      { type: 'vanish', y: 1920, width: 100 },
+      { type: 'platform', y: 2100, width: 120 },
+    ],
+    gemPositions: [
+      { x: CX, y: 250 },
+      { x: TR - 30, y: 610 },
+      { x: TL + 30, y: 840 },
+      { x: TR - 30, y: 1070 },
+      { x: CX, y: 1270 },
+      { x: CX, y: 1870 },
+    ],
+  },
+
+  // --- LEVEL 29 — Bounce + Tube combo: bounce up into tube ---
+  // You fall onto a bounce pad, it launches you upward into a tube entrance.
+  // The tube redirects you past the death zone. A two-step chain.
+  {
+    id: 29,
+    color: '#6C5CE7',
+    height: 2300,
+    gems: 6,
+    bonusGems: 4,
+    obstacles: [
+      { type: 'spike', y: 180, wall: 'right', depth: 45 },
+      { type: 'blocker', y: 330, speed: 1.8, gapSide: 'center', width: 100 },
+      { type: 'spike', y: 480, wall: 'left', depth: 50 },
+      { type: 'platform', y: 600, width: 110 },
+      // === BOUNCE → TUBE chain ===
+      // Bounce launches you UP into the tube entrance above
+      { type: 'bounce', y: 800, width: 100, factor: 1.6 },
+      { type: 'tube', y: 650, entryX: CX, exitX: TL + 35, exitY: 980 },
+      // Below the bounce: death zone
+      { type: 'spike', y: 860, wall: 'left', depth: 100 },
+      { type: 'spike', y: 860, wall: 'right', depth: 100 },
+      // Tube exits left — continue
+      { type: 'spike', y: 1080, wall: 'right', depth: 50 },
+      { type: 'platform', y: 1200, width: 120 },
+      // === Second BOUNCE → TUBE chain (reversed) ===
+      { type: 'bounce', y: 1400, width: 100, factor: 1.6 },
+      { type: 'tube', y: 1250, entryX: CX, exitX: TR - 35, exitY: 1580 },
+      { type: 'spike', y: 1460, wall: 'left', depth: 100 },
+      { type: 'spike', y: 1460, wall: 'right', depth: 100 },
+      // Tube exits right — continue
+      { type: 'spike', y: 1680, wall: 'left', depth: 50 },
+      { type: 'platform', y: 1800, width: 120 },
+      // Normal finish
+      { type: 'pendulum', y: 1950, swingSpeed: 2.2 },
+      { type: 'spike', y: 2100, wall: 'both', depth: 35 },
+    ],
+    gemPositions: [
+      { x: CX, y: 250 },
+      { x: CX, y: 550 },
+      { x: TL + 40, y: 1030 },
+      { x: CX, y: 1150 },
+      { x: TR - 40, y: 1630 },
+      { x: CX, y: 2050 },
+    ],
+  },
+
+  // --- LEVEL 30 — All 5 tools chained: fan → tube → trampoline → magnet → bounce ---
+  // The "graduation level": one continuous chain using every tool in sequence.
+  // Each tool feeds into the next — a single flowing path.
   {
     id: 30,
     color: '#E17055',
-    height: 2300,
+    height: 2500,
     gems: 7,
     bonusGems: 4,
     obstacles: [
-      { type: 'spike', y: 200, wall: 'left', depth: 50 },
-      { type: 'blocker', y: 350, speed: 2.0, gapSide: 'center', width: 100 },
-      // Long fan corridor — zigzag through tight spikes
-      { type: 'fan', y: 900, fanHeight: 350, gravityMult: 0.2 },
-      { type: 'spike', y: 600, wall: 'right', depth: 70 },
-      { type: 'spike', y: 700, wall: 'left', depth: 70 },
-      { type: 'spike', y: 800, wall: 'right', depth: 70 },
-      { type: 'spike', y: 880, wall: 'left', depth: 60 },
-      // Exit fan zone, land on trampoline to reach high platform
-      { type: 'trampoline', y: 1050, width: 90 },
-      { type: 'platform', y: 850, width: 80, xPos: TR - 90 },
-      { type: 'spike', y: 950, wall: 'left', depth: 70 },
-      // From platform continue
-      { type: 'spike', y: 1150, wall: 'right', depth: 50 },
-      { type: 'platform', y: 1300, width: 100 },
-      { type: 'pendulum', y: 1450, swingSpeed: 2.5 },
-      { type: 'spike', y: 1600, wall: 'both', depth: 40 },
-      { type: 'spike', y: 1800, wall: 'left', depth: 50 },
-      { type: 'vanish', y: 1950, width: 90 },
-      { type: 'spike', y: 2100, wall: 'right', depth: 45 },
+      { type: 'spike', y: 180, wall: 'left', depth: 45 },
+      { type: 'blocker', y: 330, speed: 1.8, gapSide: 'center', width: 100 },
+      // === STEP 1: FAN zone — float to the right ===
+      { type: 'fan', y: 750, fanHeight: 250, gravityMult: 0.22 },
+      { type: 'spike', y: 550, wall: 'left', depth: 75 },
+      { type: 'spike', y: 650, wall: 'left', depth: 75 },
+      // === STEP 2: TUBE on right — transports past death zone ===
+      { type: 'tube', y: 720, entryX: TR - 35, exitX: CX, exitY: 920 },
+      { type: 'spike', y: 800, wall: 'left', depth: 100 },
+      { type: 'spike', y: 800, wall: 'right', depth: 100 },
+      // === STEP 3: TRAMPOLINE — bounce up to platform ===
+      { type: 'trampoline', y: 1080, width: 100 },
+      { type: 'platform', y: 900, width: 90, xPos: TR - 100 },
+      { type: 'spike', y: 1000, wall: 'left', depth: 75 },
+      { type: 'spike', y: 1000, wall: 'right', depth: 60 },
+      // From platform, fall right
+      { type: 'spike', y: 1050, wall: 'left', depth: 60 },
+      // === STEP 4: MAGNET — curves you left through spike gap ===
+      { type: 'magnet', y: 1250, xPos: TL + 25, radius: 120, strength: 0.22 },
+      { type: 'spike', y: 1220, wall: 'right', depth: 85 },
+      { type: 'spike', y: 1320, wall: 'right', depth: 85 },
+      // === STEP 5: BOUNCE — launches you up to final platform ===
+      { type: 'bounce', y: 1500, width: 100, factor: 1.5 },
+      { type: 'spike', y: 1560, wall: 'left', depth: 100 },
+      { type: 'spike', y: 1560, wall: 'right', depth: 100 },
+      { type: 'platform', y: 1350, width: 90 },
+      // === From platform, continue to finish ===
+      { type: 'platform', y: 1650, width: 120 },
+      { type: 'spike', y: 1800, wall: 'both', depth: 35 },
+      { type: 'pendulum', y: 1950, swingSpeed: 2.2 },
+      { type: 'spike', y: 2100, wall: 'left', depth: 50 },
+      { type: 'spike', y: 2250, wall: 'right', depth: 50 },
+      { type: 'platform', y: 2400, width: 120 },
     ],
     gemPositions: [
-      { x: TL + 40, y: 650 },
-      { x: TR - 40, y: 750 },
-      { x: TL + 40, y: 850 },
-      { x: TR - 50, y: 820 },
-      { x: CX, y: 1250 },
-      { x: CX, y: 1500 },
-      { x: CX, y: 1850 },
+      { x: TR - 30, y: 600 },
+      { x: CX, y: 870 },
+      { x: TR - 50, y: 870 },
+      { x: TL + 30, y: 1210 },
+      { x: CX, y: 1320 },
+      { x: CX, y: 1900 },
+      { x: CX, y: 2200 },
     ],
   },
 

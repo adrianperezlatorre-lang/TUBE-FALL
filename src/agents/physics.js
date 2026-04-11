@@ -128,13 +128,14 @@ export function checkCollisions(ball, obstacles, gemPositions, collectedGems) {
       }
 
       case 'tube': {
-        // Check if ball enters the tube entry point
-        const dx = ball.x - obs.entryX;
-        const dy = ball.y - obs.entryY;
-        if (dx * dx + dy * dy < (ball.radius + obs.tubeWidth / 2) * (ball.radius + obs.tubeWidth / 2)) {
-          if (!result.tubeTransport) {
-            result.tubeTransport = { exitX: obs.exitX, exitY: obs.exitY };
-          }
+        // Wide capture zone: horizontal band at entry, full tube width
+        // Ball just needs to fall into the tube opening area
+        const captureW = obs.tubeWidth + ball.radius * 2 + 10;
+        const captureH = obs.tubeWidth + ball.radius;
+        const inX = Math.abs(ball.x - obs.entryX) < captureW / 2;
+        const inY = Math.abs(ball.y - obs.entryY) < captureH / 2;
+        if (inX && inY && !result.tubeTransport) {
+          result.tubeTransport = { exitX: obs.exitX, exitY: obs.exitY };
         }
         break;
       }
