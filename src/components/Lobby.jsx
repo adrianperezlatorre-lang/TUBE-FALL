@@ -12,7 +12,7 @@ import { LEVELS } from '../agents/levels.js';
  * @param {Function} props.onPlay - Called with levelId when user taps play
  * @param {Function} props.onOpenShop - Opens shop overlay
  */
-export default function Lobby({ onPlay, onOpenShop, onOpenTimeTrial, onOpenInfinity }) {
+export default function Lobby({ onPlay, onOpenShop, onOpenTimeTrial, onOpenInfinity, onOpenLeaderboard, onOpenAccount }) {
   const [state, setState] = useState(Store.getState());
 
   useEffect(() => {
@@ -39,8 +39,16 @@ export default function Lobby({ onPlay, onOpenShop, onOpenTimeTrial, onOpenInfin
         borderBottom: '2px solid #000',
         flexShrink: 0,
       }}>
-        <div style={{ fontSize: '24px', fontWeight: 'bold', letterSpacing: '2px' }}>
-          TUBE FALL
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {/* Account icon */}
+          <button onClick={onOpenAccount} style={{
+            background: '#EEE', border: 'none', borderRadius: '50%',
+            width: 30, height: 30, fontSize: 14, cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>👤</button>
+          <div style={{ fontSize: '20px', fontWeight: 'bold', letterSpacing: '2px' }}>
+            TUBE FALL
+          </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
           <div style={{
@@ -100,6 +108,22 @@ export default function Lobby({ onPlay, onOpenShop, onOpenTimeTrial, onOpenInfin
             }}
           >
             ∞
+          </button>
+          <button
+            onClick={onOpenLeaderboard}
+            style={{
+              background: '#F39C12',
+              color: '#FFF',
+              border: 'none',
+              padding: '5px 8px',
+              borderRadius: '6px',
+              fontSize: '11px',
+              cursor: 'pointer',
+              fontFamily: 'monospace',
+              fontWeight: 'bold',
+            }}
+          >
+            👑
           </button>
         </div>
       </div>

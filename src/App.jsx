@@ -17,6 +17,8 @@ import InfinityMode from './components/InfinityMode.jsx';
 import InfinityGame from './components/InfinityGame.jsx';
 import LevelTransition from './components/LevelTransition.jsx';
 import Tutorial, { isTutorialDone } from './components/Tutorial.jsx';
+import Leaderboard from './components/Leaderboard.jsx';
+import Account from './components/Account.jsx';
 
 const VIEW = {
   LOBBY: 'LOBBY',
@@ -35,6 +37,8 @@ export default function App() {
   const [showTutorial, setShowTutorial] = useState(!isTutorialDone());
   const [view, setView] = useState(VIEW.LOBBY);
   const [shopOpen, setShopOpen] = useState(false);
+  const [leaderboardOpen, setLeaderboardOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
   const [currentLevelId, setCurrentLevelId] = useState(1);
   const [transitionColor, setTransitionColor] = useState('#FF6B9D');
   const [transitionNumber, setTransitionNumber] = useState(1);
@@ -114,6 +118,8 @@ export default function App() {
           onOpenShop={() => setShopOpen(true)}
           onOpenTimeTrial={() => setView(VIEW.TIME_TRIAL)}
           onOpenInfinity={() => setView(VIEW.INFINITY_SELECT)}
+          onOpenLeaderboard={() => setLeaderboardOpen(true)}
+          onOpenAccount={() => setAccountOpen(true)}
         />
       )}
 
@@ -324,6 +330,14 @@ export default function App() {
 
       {shopOpen && (
         <Shop onClose={() => setShopOpen(false)} />
+      )}
+
+      {leaderboardOpen && (
+        <Leaderboard onClose={() => setLeaderboardOpen(false)} />
+      )}
+
+      {accountOpen && (
+        <Account onClose={() => setAccountOpen(false)} />
       )}
     </>
   );
