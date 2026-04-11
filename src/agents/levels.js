@@ -746,151 +746,116 @@ export const LEVELS = [
  */
 export const TIME_TRIAL_LEVELS = [
   // --- TRIAL 1: "THE GAUNTLET" ---
-  // Zigzag path: platforms force you left→right→left, spikes block straight lines
+  // Long zigzag, moderate spikes (max depth 60), wide gaps, no vanish
+  // Tube inner = 240px. Max spike 60 = 180px clear. Ball = 24px. Very beatable.
   {
     id: 101,
     color: '#E74C3C',
-    height: 1800,
+    height: 2500,
     gems: 0,
     bonusGems: 0,
     timeTrial: true,
     obstacles: [
-      // Section 1: forced right
-      { type: 'spike', y: 120, wall: 'right', depth: 30 },
-      { type: 'platform', y: 200, width: 90, xPos: TL + 5 },
-      { type: 'spike', y: 200, wall: 'right', depth: 80 },
-      // Section 2: forced left
-      { type: 'spike', y: 340, wall: 'left', depth: 80 },
-      { type: 'platform', y: 340, width: 90, xPos: TR - 95 },
-      { type: 'spike', y: 440, wall: 'left', depth: 30 },
-      // Section 3: center blocker + spikes
-      { type: 'blocker', y: 530, speed: 2.5, gapSide: 'center', width: 120 },
-      { type: 'spike', y: 600, wall: 'both', depth: 50 },
-      // Section 4: vanish platforms zigzag
-      { type: 'spike', y: 700, wall: 'right', depth: 85 },
-      { type: 'vanish', y: 720, width: 80, xPos: TL + 5 },
-      { type: 'spike', y: 820, wall: 'left', depth: 85 },
-      { type: 'vanish', y: 840, width: 80, xPos: TR - 85 },
-      // Section 5: pendulum gauntlet
-      { type: 'pendulum', y: 960, swingSpeed: 3.5 },
-      { type: 'spike', y: 1020, wall: 'both', depth: 45 },
-      { type: 'pendulum', y: 1100, swingSpeed: 3.5, phase: Math.PI },
-      // Section 6: final zigzag
-      { type: 'spike', y: 1200, wall: 'left', depth: 90 },
-      { type: 'platform', y: 1220, width: 70, xPos: TR - 75 },
-      { type: 'spike', y: 1340, wall: 'right', depth: 90 },
-      { type: 'platform', y: 1360, width: 70, xPos: TL + 5 },
-      { type: 'spike', y: 1480, wall: 'both', depth: 55 },
-      { type: 'blocker', y: 1580, speed: 3.0, gapSide: 'right', width: 130 },
-      { type: 'spike', y: 1680, wall: 'left', depth: 80 },
-      { type: 'spike', y: 1680, wall: 'right', depth: 40 },
+      { type: 'spike', y: 150, wall: 'right', depth: 40 },
+      { type: 'spike', y: 300, wall: 'left', depth: 45 },
+      { type: 'spike', y: 450, wall: 'right', depth: 50 },
+      { type: 'platform', y: 550, width: 110 },
+      { type: 'spike', y: 650, wall: 'left', depth: 45 },
+      { type: 'spike', y: 800, wall: 'right', depth: 50 },
+      { type: 'blocker', y: 950, speed: 1.8, gapSide: 'center', width: 100 },
+      { type: 'spike', y: 1100, wall: 'left', depth: 55 },
+      { type: 'spike', y: 1250, wall: 'right', depth: 45 },
+      { type: 'platform', y: 1350, width: 100, xPos: TL + 10 },
+      { type: 'spike', y: 1450, wall: 'both', depth: 35 },
+      { type: 'spike', y: 1600, wall: 'left', depth: 50 },
+      { type: 'pendulum', y: 1750, swingSpeed: 2.5 },
+      { type: 'spike', y: 1900, wall: 'right', depth: 55 },
+      { type: 'spike', y: 2050, wall: 'left', depth: 45 },
+      { type: 'blocker', y: 2150, speed: 2.0, gapSide: 'right', width: 100 },
+      { type: 'spike', y: 2300, wall: 'both', depth: 35 },
+      { type: 'spike', y: 2400, wall: 'right', depth: 40 },
     ],
     gemPositions: [],
   },
 
   // --- TRIAL 2: "NEEDLE THREAD" ---
-  // Tight alternating passages with platforms you must ride across
+  // Longer, platforms + pendulums, moderate difficulty
+  // Spikes max 65px. Pendulums slow (2.5-3.0). Blockers narrow (100px).
   {
     id: 102,
     color: '#8E44AD',
-    height: 2000,
+    height: 3000,
     gems: 0,
     bonusGems: 0,
     timeTrial: true,
     obstacles: [
-      // Tight zigzag entry
-      { type: 'spike', y: 100, wall: 'left', depth: 85 },
-      { type: 'spike', y: 180, wall: 'right', depth: 85 },
-      { type: 'spike', y: 260, wall: 'left', depth: 85 },
-      // Moving platform section — must ride across
-      { type: 'spike', y: 360, wall: 'both', depth: 50 },
-      { type: 'platform', y: 380, width: 80, moveRange: 100, speed: 2.0 },
-      { type: 'spike', y: 460, wall: 'right', depth: 90 },
-      // Pendulum alley
-      { type: 'pendulum', y: 540, swingSpeed: 4.0 },
-      { type: 'spike', y: 600, wall: 'left', depth: 70 },
-      { type: 'pendulum', y: 680, swingSpeed: 4.0, phase: Math.PI },
-      { type: 'spike', y: 740, wall: 'right', depth: 70 },
-      // Vanish bridge
-      { type: 'spike', y: 840, wall: 'left', depth: 90 },
-      { type: 'vanish', y: 840, width: 70, xPos: TR - 75 },
-      { type: 'spike', y: 940, wall: 'right', depth: 90 },
-      { type: 'vanish', y: 940, width: 70, xPos: TL + 5 },
-      // Fast blocker section
-      { type: 'blocker', y: 1060, speed: 3.5, gapSide: 'left', width: 130 },
-      { type: 'spike', y: 1130, wall: 'both', depth: 50 },
-      { type: 'blocker', y: 1210, speed: 3.5, gapSide: 'right', width: 130, phase: Math.PI },
-      // Final gauntlet
-      { type: 'spike', y: 1320, wall: 'left', depth: 90 },
-      { type: 'platform', y: 1340, width: 70, xPos: TR - 75 },
-      { type: 'spike', y: 1440, wall: 'right', depth: 90 },
-      { type: 'platform', y: 1460, width: 70, xPos: TL + 5 },
-      { type: 'pendulum', y: 1560, swingSpeed: 4.5 },
-      { type: 'spike', y: 1640, wall: 'both', depth: 55 },
-      { type: 'spike', y: 1740, wall: 'left', depth: 85 },
-      { type: 'spike', y: 1740, wall: 'right', depth: 40 },
-      { type: 'blocker', y: 1840, speed: 4.0, gapSide: 'center', width: 140 },
-      { type: 'spike', y: 1920, wall: 'both', depth: 60 },
+      { type: 'spike', y: 150, wall: 'left', depth: 50 },
+      { type: 'spike', y: 300, wall: 'right', depth: 50 },
+      { type: 'platform', y: 400, width: 100, xPos: TL + 10 },
+      { type: 'spike', y: 500, wall: 'right', depth: 55 },
+      { type: 'pendulum', y: 650, swingSpeed: 2.5 },
+      { type: 'spike', y: 800, wall: 'left', depth: 55 },
+      { type: 'spike', y: 950, wall: 'right', depth: 60 },
+      { type: 'platform', y: 1050, width: 100, xPos: TR - 110 },
+      { type: 'spike', y: 1150, wall: 'both', depth: 30 },
+      { type: 'blocker', y: 1300, speed: 2.0, gapSide: 'left', width: 100 },
+      { type: 'spike', y: 1450, wall: 'right', depth: 55 },
+      { type: 'vanish', y: 1550, width: 100 },
+      { type: 'spike', y: 1650, wall: 'left', depth: 60 },
+      { type: 'pendulum', y: 1800, swingSpeed: 3.0 },
+      { type: 'spike', y: 1950, wall: 'right', depth: 50 },
+      { type: 'platform', y: 2050, width: 110, moveRange: 60, speed: 1.0 },
+      { type: 'spike', y: 2150, wall: 'left', depth: 55 },
+      { type: 'spike', y: 2300, wall: 'both', depth: 35 },
+      { type: 'blocker', y: 2450, speed: 2.2, gapSide: 'center', width: 100 },
+      { type: 'spike', y: 2600, wall: 'right', depth: 60 },
+      { type: 'spike', y: 2750, wall: 'left', depth: 50 },
+      { type: 'spike', y: 2900, wall: 'both', depth: 30 },
     ],
     gemPositions: [],
   },
 
-  // --- TRIAL 3: "IMPOSSIBLE DROP" ---
-  // Everything at once: platforms, vanish, pendulums, fans, tight spikes
+  // --- TRIAL 3: "THE LONG RUN" ---
+  // Very long, all obstacle types, but generous spacing and moderate depths
+  // Spikes max 65px. Fans included. Vanish platforms wide. Definitely beatable.
   {
     id: 103,
     color: '#2C3E50',
-    height: 2400,
+    height: 3500,
     gems: 0,
     bonusGems: 0,
     timeTrial: true,
     obstacles: [
-      // Immediate forced zigzag
-      { type: 'spike', y: 80, wall: 'right', depth: 90 },
-      { type: 'spike', y: 160, wall: 'left', depth: 90 },
-      { type: 'spike', y: 240, wall: 'right', depth: 90 },
-      { type: 'spike', y: 320, wall: 'left', depth: 90 },
-      // Low gravity zone with spikes on both sides
-      { type: 'fan', y: 520, fanHeight: 150, gravityMult: 0.3 },
-      { type: 'spike', y: 420, wall: 'both', depth: 55 },
-      { type: 'spike', y: 480, wall: 'left', depth: 80 },
-      { type: 'spike', y: 480, wall: 'right', depth: 40 },
-      // Platform maze
-      { type: 'spike', y: 600, wall: 'left', depth: 90 },
-      { type: 'platform', y: 620, width: 70, xPos: TR - 75 },
-      { type: 'spike', y: 720, wall: 'right', depth: 90 },
-      { type: 'vanish', y: 740, width: 70, xPos: TL + 5 },
-      { type: 'spike', y: 840, wall: 'left', depth: 90 },
-      { type: 'platform', y: 860, width: 70, xPos: TR - 75, moveRange: 40, speed: 1.5 },
-      // Triple pendulum
-      { type: 'pendulum', y: 980, swingSpeed: 4.0 },
-      { type: 'pendulum', y: 1040, swingSpeed: 4.0, phase: Math.PI * 0.66 },
-      { type: 'pendulum', y: 1100, swingSpeed: 4.0, phase: Math.PI * 1.33 },
-      // Tight blocker corridor
-      { type: 'blocker', y: 1200, speed: 3.5, gapSide: 'right', width: 140 },
-      { type: 'spike', y: 1260, wall: 'both', depth: 55 },
-      { type: 'blocker', y: 1330, speed: 3.5, gapSide: 'left', width: 140, phase: Math.PI },
-      { type: 'spike', y: 1390, wall: 'both', depth: 55 },
-      // Vanish platform gauntlet
-      { type: 'spike', y: 1480, wall: 'right', depth: 90 },
-      { type: 'vanish', y: 1500, width: 70, xPos: TL + 5 },
-      { type: 'spike', y: 1580, wall: 'left', depth: 90 },
-      { type: 'vanish', y: 1600, width: 70, xPos: TR - 75 },
-      { type: 'spike', y: 1680, wall: 'right', depth: 90 },
-      { type: 'vanish', y: 1700, width: 70, xPos: TL + 5 },
-      // Low grav finale with pendulums
-      { type: 'fan', y: 1900, fanHeight: 150, gravityMult: 0.25 },
-      { type: 'pendulum', y: 1800, swingSpeed: 5.0 },
-      { type: 'spike', y: 1860, wall: 'both', depth: 60 },
-      { type: 'pendulum', y: 1900, swingSpeed: 5.0, phase: Math.PI },
-      // Final obstacle rush
-      { type: 'spike', y: 2000, wall: 'left', depth: 90 },
-      { type: 'spike', y: 2000, wall: 'right', depth: 50 },
-      { type: 'blocker', y: 2100, speed: 4.5, gapSide: 'center', width: 150 },
-      { type: 'spike', y: 2180, wall: 'both', depth: 60 },
-      { type: 'spike', y: 2280, wall: 'left', depth: 80 },
-      { type: 'spike', y: 2280, wall: 'right', depth: 60 },
-      { type: 'spike', y: 2350, wall: 'both', depth: 65 },
+      { type: 'spike', y: 150, wall: 'right', depth: 50 },
+      { type: 'spike', y: 300, wall: 'left', depth: 55 },
+      { type: 'spike', y: 450, wall: 'right', depth: 45 },
+      { type: 'platform', y: 550, width: 110, xPos: TL + 10 },
+      { type: 'spike', y: 700, wall: 'left', depth: 60 },
+      { type: 'pendulum', y: 850, swingSpeed: 2.5 },
+      { type: 'spike', y: 1000, wall: 'right', depth: 55 },
+      // Low gravity zone
+      { type: 'fan', y: 1250, fanHeight: 180, gravityMult: 0.3 },
+      { type: 'spike', y: 1100, wall: 'both', depth: 30 },
+      { type: 'spike', y: 1200, wall: 'left', depth: 50 },
+      // After low grav
+      { type: 'spike', y: 1400, wall: 'right', depth: 55 },
+      { type: 'vanish', y: 1500, width: 110 },
+      { type: 'spike', y: 1600, wall: 'left', depth: 50 },
+      { type: 'blocker', y: 1750, speed: 2.0, gapSide: 'center', width: 100 },
+      { type: 'spike', y: 1900, wall: 'right', depth: 60 },
+      { type: 'platform', y: 2000, width: 100, xPos: TR - 110 },
+      { type: 'spike', y: 2100, wall: 'both', depth: 35 },
+      { type: 'pendulum', y: 2250, swingSpeed: 2.8 },
+      { type: 'spike', y: 2400, wall: 'left', depth: 55 },
+      { type: 'spike', y: 2550, wall: 'right', depth: 50 },
+      { type: 'vanish', y: 2650, width: 100, xPos: TL + 10 },
+      { type: 'spike', y: 2750, wall: 'left', depth: 60 },
+      { type: 'blocker', y: 2900, speed: 2.2, gapSide: 'right', width: 100 },
+      // Final section
+      { type: 'spike', y: 3050, wall: 'both', depth: 35 },
+      { type: 'spike', y: 3200, wall: 'right', depth: 55 },
+      { type: 'spike', y: 3350, wall: 'left', depth: 45 },
+      { type: 'spike', y: 3450, wall: 'right', depth: 40 },
     ],
     gemPositions: [],
   },
