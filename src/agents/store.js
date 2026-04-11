@@ -19,7 +19,9 @@ const DEFAULT_STATE = {
     jumpPower: 0,
     fallSpeed: 0,
     skin: 0,
+    particleDesign: 0,
   },
+  ownedParticles: [0], // particle design IDs owned
   firstAttemptLevels: [],
   totalDeaths: 0,
   totalGems: 0,
@@ -222,6 +224,79 @@ export const Store = {
   /** Get upgrade costs. */
   getUpgradeCosts() {
     return UPGRADE_COSTS;
+  },
+
+  // ── PARTICLES ─────────────────────────
+
+  getOwnedParticles() {
+    return state.ownedParticles || [0];
+  },
+
+  purchaseParticle(designId, cost) {
+    if (!state.ownedParticles) state.ownedParticles = [0];
+    if (state.ownedParticles.includes(designId)) return false;
+    if (state.gems < cost) return false;
+    state.gems -= cost;
+    state.ownedParticles.push(designId);
+    state.upgrades.particleDesign = designId;
+    notify();
+    return true;
+  },
+
+  selectParticle(designId) {
+    if (!state.ownedParticles) state.ownedParticles = [0];
+    if (!state.ownedParticles.includes(designId)) return;
+    state.upgrades.particleDesign = designId;
+    notify();
+  },
+
+  // ── CODES ─────────────────────────────
+
+  getRedeemedCodes() {
+    return state._redeemedCodes || [];
+  },
+
+  redeemCode(code) {
+    if (!state._redeemedCodes) state._redeemedCodes = [];
+    if (state._redeemedCodes.includes(code)) return { success: false, error: 'Already redeemed' };
+
+    const CODES = {
+      '676767': { type: 'gems', amount: 67, desc: '+67 gems!' },
+      '270712': { type: 'gems', amount: 99999, desc: 'Infinite gems!' },
+      'H20H2O': { type: 'particle', designId: 5, desc: 'Bubbles particle unlocked!' },
+      'FREE26': { type: 'freeItems', amount: 3, desc: '3 free shop items!' },
+    };
+
+    const reward = CODES[code];
+    if (!reward) return { success: false, error: 'Invalid code' };
+
+    state._redeemedCodes.push(code);
+
+    if (reward.type === 'gems') {
+      state.gems += reward.amount;
+      state.totalGems += reward.amount;
+    } else if (reward.type === 'particle') {
+      if (!state.ownedParticles) state.ownedParticles = [0];
+      if (!state.ownedParticles.includes(reward.designId)) {
+        state.ownedParticles.push(reward.designId);
+      }
+    } else if (reward.type === 'freeItems') {
+      state._freeItems = (state._freeItems || 0) + reward.amount;
+    }
+
+    notify();
+    return { success: true, desc: reward.desc };
+  },
+
+  getFreeItems() {
+    return state._freeItems || 0;
+  },
+
+  useFreeItem() {
+    if ((state._freeItems || 0) <= 0) return false;
+    state._freeItems--;
+    notify();
+    return true;
   },
 
   /**

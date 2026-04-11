@@ -9,6 +9,7 @@ import { ObstacleManager } from './obstacles.js';
 import { getLevel } from './levels.js';
 import { AudioSystem } from './audio.js';
 import { heldDirection } from '../hooks/useInput.js';
+import { ParticleSystem } from './particles.js';
 
 export { CONFIG, STATE };
 
@@ -47,6 +48,7 @@ export class GameEngine {
     this.deathCount = 0;
     this.collectedGems = new Set();
     this.obstacleManager = new ObstacleManager();
+    this.trailParticles = new ParticleSystem();
 
     // Upgrades (set from store before starting)
     this.jumpPower = 1.0;
@@ -85,6 +87,7 @@ export class GameEngine {
     this.jumpPower = jumpTiers[upgrades.jumpPower] || 1.0;
     this.fallSpeedMultiplier = fallTiers[upgrades.fallSpeed] || 1.0;
     this.skinIndex = upgrades.skin || 0;
+    this.trailParticles.setDesign(upgrades.particleDesign || 0);
   }
 
   /**
@@ -305,6 +308,11 @@ export class GameEngine {
     // Air friction on vx — less friction in low gravity zones
     ball.vx *= this.isInLowGravity() ? 0.995 : 0.98;
 
+    // Update trail particles
+    if (ball.alive) {
+      this.trailParticles.update(ball.x, ball.y, ball.vx, ball.vy, dt);
+    }
+
     // Collision detection
     const result = checkCollisions(ball, this.obstacleManager.getActive(ball.y), this.level.gemPositions, this.collectedGems);
 
@@ -419,6 +427,9 @@ export class GameEngine {
 
     // Draw gems
     this.drawGems(ctx, cam);
+
+    // Draw trail particles (behind ball)
+    this.trailParticles.draw(ctx, cam);
 
     // Draw ball or death particles
     if (this.ball.alive && this.state === STATE.PLAYING) {

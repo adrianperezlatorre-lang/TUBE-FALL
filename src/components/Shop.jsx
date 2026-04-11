@@ -5,6 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { Store } from '../agents/store.js';
+import { PARTICLE_DESIGNS } from '../agents/particles.js';
 
 const JUMP_TIERS = [
   { cost: 15, desc: 'Slightly higher jumps' },
@@ -229,6 +230,59 @@ export default function Shop({ onClose }) {
               );
             })}
           </div>
+        {/* PARTICLES */}
+        <div>
+          <div style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '12px' }}>Particle Trails</div>
+          <div style={{
+            display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px',
+          }}>
+            {PARTICLE_DESIGNS.map((pd) => {
+              const owned = (Store.getOwnedParticles()).includes(pd.id);
+              const selected = upgrades.particleDesign === pd.id;
+              const canBuy = !owned && gems >= pd.cost;
+              const hasFree = Store.getFreeItems() > 0;
+
+              return (
+                <div key={pd.id} onClick={() => {
+                  if (owned || pd.id === 0) Store.selectParticle(pd.id);
+                }} style={{
+                  border: selected ? '3px solid #000' : '2px solid #CCC',
+                  borderRadius: '8px', padding: '8px',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px',
+                  cursor: 'pointer', backgroundColor: selected ? '#E8E8E8' : '#FFF',
+                }}>
+                  <div style={{
+                    width: 24, height: 24, borderRadius: '50%',
+                    backgroundColor: pd.color || '#DDD',
+                  }} />
+                  <div style={{ fontSize: '10px', fontWeight: 'bold' }}>{pd.name}</div>
+                  {pd.id === 0 ? (
+                    <div style={{ fontSize: '9px', color: '#888' }}>FREE</div>
+                  ) : owned ? (
+                    <div style={{ fontSize: '9px', color: selected ? '#000' : '#888' }}>
+                      {selected ? 'ACTIVE' : 'SELECT'}
+                    </div>
+                  ) : (
+                    <button onClick={(e) => {
+                      e.stopPropagation();
+                      if (hasFree) { Store.useFreeItem(); Store.purchaseParticle(pd.id, 0); }
+                      else Store.purchaseParticle(pd.id, pd.cost);
+                    }} disabled={!canBuy && !hasFree} style={{
+                      fontSize: '9px', padding: '2px 6px', border: 'none', borderRadius: '3px',
+                      background: (canBuy || hasFree) ? '#FFD700' : '#DDD', color: '#000',
+                      cursor: (canBuy || hasFree) ? 'pointer' : 'default', fontFamily: 'monospace', fontWeight: 'bold',
+                    }}>
+                      {hasFree ? 'FREE' : `◆ ${pd.cost}`}
+                    </button>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* CODES */}
+        <CodeRedeemer />
         </div>
       </div>
     </div>
@@ -423,4 +477,49 @@ function starPoints(cx, cy, spikes, outerR, innerR) {
     rot += step;
   }
   return pts.join(' ');
+}
+
+function CodeRedeemer() {
+  const [code, setCode] = useState('');
+  const [msg, setMsg] = useState('');
+  const [msgColor, setMsgColor] = useState('#888');
+
+  function handleRedeem() {
+    if (!code.trim()) return;
+    const result = Store.redeemCode(code.trim());
+    if (result.success) {
+      setMsg(result.desc);
+      setMsgColor('#2ECC71');
+      setCode('');
+    } else {
+      setMsg(result.error);
+      setMsgColor('#E74C3C');
+    }
+    setTimeout(() => setMsg(''), 3000);
+  }
+
+  return (
+    <div>
+      <div style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '8px' }}>Redeem Code</div>
+      <div style={{ display: 'flex', gap: '6px' }}>
+        <input
+          type="text"
+          value={code}
+          onChange={(e) => setCode(e.target.value.toUpperCase())}
+          placeholder="Enter code"
+          maxLength={8}
+          style={{
+            flex: 1, padding: '8px 10px', border: '2px solid #CCC', borderRadius: '6px',
+            fontSize: '14px', fontFamily: 'monospace', outline: 'none',
+          }}
+        />
+        <button onClick={handleRedeem} style={{
+          padding: '8px 14px', backgroundColor: '#000', color: '#FFF',
+          border: 'none', borderRadius: '6px', fontSize: '13px', fontWeight: 'bold',
+          cursor: 'pointer', fontFamily: 'monospace',
+        }}>OK</button>
+      </div>
+      {msg && <div style={{ fontSize: '12px', color: msgColor, marginTop: '6px' }}>{msg}</div>}
+    </div>
+  );
 }
