@@ -350,7 +350,39 @@ export class GameEngine {
 
     // Vanish platform touched — start its timer
     if (result.vanishTouch) {
-      result.vanishTouch.touchTimer = 1; // start counting (>0 means active)
+      result.vanishTouch.touchTimer = 1;
+    }
+
+    // Tube transport — teleport ball to exit
+    if (result.tubeTransport) {
+      ball.x = result.tubeTransport.exitX;
+      ball.y = result.tubeTransport.exitY;
+      ball.vy = Math.max(ball.vy, 4); // propel downward
+      AudioSystem.play('JUMP');
+    }
+
+    // Bounce — reverse and amplify velocity
+    if (result.bounceEffect) {
+      ball.vy = -Math.abs(ball.vy) * result.bounceEffect.factor;
+      ball.vx *= -0.8;
+      AudioSystem.play('LAND_ON_ELEV');
+    }
+
+    // Trampoline — bounce higher each consecutive time
+    if (result.trampolineBounce) {
+      const tram = result.trampolineBounce;
+      tram.bounceCount = Math.min((tram.bounceCount || 0) + 1, 5);
+      tram._squish = 1;
+      const power = 6 + tram.bounceCount * 2; // 8, 10, 12, 14, 16
+      ball.vy = -power;
+      this.ridingElevator = null;
+      AudioSystem.play('JUMP');
+    }
+
+    // Magnet — slowly pull ball toward center
+    if (result.magnetPull) {
+      ball.vx += result.magnetPull.dx;
+      ball.vy += result.magnetPull.dy;
     }
 
     for (const gemIdx of result.collected) {

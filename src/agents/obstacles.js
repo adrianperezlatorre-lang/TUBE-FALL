@@ -43,6 +43,10 @@ export class ObstacleManager {
       case 'platform': return this.initPlatform(base);
       case 'vanish': return this.initVanish(base);
       case 'fan': return this.initFan(base);
+      case 'tube': return this.initTube(base);
+      case 'bounce': return this.initBounce(base);
+      case 'trampoline': return this.initTrampoline(base);
+      case 'magnet': return this.initMagnet(base);
       default: return base;
     }
   }
@@ -180,6 +184,49 @@ export class ObstacleManager {
     return obs;
   }
 
+  /** TUBE — mini tunnel that propels ball from entry to exit point */
+  initTube(obs) {
+    obs.entryX = obs.entryX !== undefined ? obs.entryX : TL + 20;
+    obs.entryY = obs.y;
+    obs.exitX = obs.exitX !== undefined ? obs.exitX : TR - 20;
+    obs.exitY = obs.exitY !== undefined ? obs.exitY : obs.y + (obs.length || 200);
+    obs.tubeWidth = 30;
+    obs._animPhase = 0;
+    obs.captured = false; // is ball inside?
+    return obs;
+  }
+
+  /** BOUNCE — zone that reflects ball velocity on contact */
+  initBounce(obs) {
+    obs.bounceW = obs.width || 60;
+    obs.bounceH = obs.height || 20;
+    obs.bounceX = obs.xPos !== undefined ? obs.xPos : CX - obs.bounceW / 2;
+    obs.bounceY = obs.y;
+    obs.bounceFactor = obs.factor || 1.3; // velocity multiplier on bounce
+    return obs;
+  }
+
+  /** TRAMPOLINE — bouncy surface, each consecutive bounce goes higher */
+  initTrampoline(obs) {
+    obs.tramW = obs.width || 80;
+    obs.tramH = 12;
+    obs.tramX = obs.xPos !== undefined ? obs.xPos : CX - obs.tramW / 2;
+    obs.tramY = obs.y;
+    obs.bounceCount = 0;
+    obs._squish = 0; // animation
+    return obs;
+  }
+
+  /** MAGNET — circular area that slowly attracts ball toward center */
+  initMagnet(obs) {
+    obs.magX = obs.xPos !== undefined ? obs.xPos : CX;
+    obs.magY = obs.y;
+    obs.magRadius = obs.radius || 80;
+    obs.magStrength = obs.strength || 0.15;
+    obs._animPhase = 0;
+    return obs;
+  }
+
   // ── HELPERS ───────────────────────────────────────────
 
   getGapCenter(gapSide, gapW) {
@@ -264,6 +311,18 @@ export class ObstacleManager {
           obs._animPhase = (t * 8) % (Math.PI * 2);
           break;
         }
+        case 'tube': {
+          obs._animPhase = (t * 6) % 1;
+          break;
+        }
+        case 'trampoline': {
+          if (obs._squish > 0) obs._squish *= 0.9;
+          break;
+        }
+        case 'magnet': {
+          obs._animPhase = t * 2;
+          break;
+        }
       }
     }
   }
@@ -298,6 +357,10 @@ export class ObstacleManager {
         case 'platform': this.drawPlatform(ctx, obs, cameraY); break;
         case 'vanish': this.drawVanish(ctx, obs, cameraY); break;
         case 'fan': this.drawFan(ctx, obs, cameraY); break;
+        case 'tube': this.drawTube(ctx, obs, cameraY); break;
+        case 'bounce': this.drawBounce(ctx, obs, cameraY); break;
+        case 'trampoline': this.drawTrampoline(ctx, obs, cameraY); break;
+        case 'magnet': this.drawMagnet(ctx, obs, cameraY); break;
       }
     }
   }
@@ -460,6 +523,131 @@ export class ObstacleManager {
         ctx.stroke();
       }
     }
+  }
+
+  /** TUBE — curved tunnel with animated arrows */
+  drawTube(ctx, obs, cam) {
+    const ex = obs.entryX, ey = obs.entryY - cam;
+    const xx = obs.exitX, xy = obs.exitY - cam;
+    // Draw tube body (thick line between entry and exit)
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = obs.tubeWidth;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(ex, ey);
+    // Curve through midpoint
+    const mx = (ex + xx) / 2 + (xx > ex ? -30 : 30);
+    const my = (ey + xy) / 2;
+    ctx.quadraticCurveTo(mx, my, xx, xy);
+    ctx.stroke();
+    // Inner white line (tunnel opening)
+    ctx.strokeStyle = '#FFF';
+    ctx.lineWidth = obs.tubeWidth - 10;
+    ctx.beginPath();
+    ctx.moveTo(ex, ey);
+    ctx.quadraticCurveTo(mx, my, xx, xy);
+    ctx.stroke();
+    // Entry/exit circles
+    ctx.fillStyle = '#000';
+    ctx.beginPath();
+    ctx.arc(ex, ey, obs.tubeWidth / 2 + 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(xx, xy, obs.tubeWidth / 2 + 2, 0, Math.PI * 2);
+    ctx.fill();
+    // Animated arrows inside
+    ctx.fillStyle = 'rgba(0,0,0,0.3)';
+    const steps = 4;
+    for (let i = 0; i < steps; i++) {
+      const t = ((i / steps) + obs._animPhase) % 1;
+      const ax = ex + (xx - ex) * t;
+      const ay = ey + (xy - ey) * t;
+      ctx.beginPath();
+      ctx.arc(ax, ay, 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.lineCap = 'butt';
+  }
+
+  /** BOUNCE — springy wall that reflects ball */
+  drawBounce(ctx, obs, cam) {
+    const x = obs.bounceX, y = obs.bounceY - cam, w = obs.bounceW, h = obs.bounceH;
+    ctx.fillStyle = '#000';
+    ctx.fillRect(x, y, w, h);
+    // Spring zigzag pattern inside
+    ctx.strokeStyle = '#FFF';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    const zigCount = 5;
+    for (let i = 0; i <= zigCount; i++) {
+      const zx = x + 4 + (i / zigCount) * (w - 8);
+      const zy = y + (i % 2 === 0 ? 3 : h - 3);
+      if (i === 0) ctx.moveTo(zx, zy);
+      else ctx.lineTo(zx, zy);
+    }
+    ctx.stroke();
+  }
+
+  /** TRAMPOLINE — stretchy bouncy surface */
+  drawTrampoline(ctx, obs, cam) {
+    const x = obs.tramX, y = obs.tramY - cam, w = obs.tramW, h = obs.tramH;
+    const squish = obs._squish || 0;
+    // Draw as curved surface
+    ctx.fillStyle = '#000';
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    // Curved top (squish effect)
+    ctx.quadraticCurveTo(x + w / 2, y - 6 + squish * 8, x + w, y);
+    ctx.lineTo(x + w, y + h);
+    ctx.lineTo(x, y + h);
+    ctx.closePath();
+    ctx.fill();
+    // Legs
+    ctx.fillRect(x + 4, y + h, 4, 10);
+    ctx.fillRect(x + w - 8, y + h, 4, 10);
+    // Springs
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 2;
+    for (let i = 0; i < 3; i++) {
+      const sx = x + 12 + i * ((w - 24) / 2);
+      ctx.beginPath();
+      ctx.moveTo(sx, y + h);
+      ctx.lineTo(sx - 3, y + h + 3);
+      ctx.lineTo(sx + 3, y + h + 6);
+      ctx.lineTo(sx - 3, y + h + 9);
+      ctx.stroke();
+    }
+  }
+
+  /** MAGNET — circular attraction zone with field lines */
+  drawMagnet(ctx, obs, cam) {
+    const x = obs.magX, y = obs.magY - cam, r = obs.magRadius;
+    // Field lines (rotating)
+    ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+    ctx.lineWidth = 1.5;
+    const phase = obs._animPhase || 0;
+    for (let i = 0; i < 6; i++) {
+      const angle = (i / 6) * Math.PI * 2 + phase;
+      const innerR = r * 0.3;
+      ctx.beginPath();
+      ctx.moveTo(x + Math.cos(angle) * r, y + Math.sin(angle) * r);
+      ctx.lineTo(x + Math.cos(angle) * innerR, y + Math.sin(angle) * innerR);
+      ctx.stroke();
+    }
+    // Core
+    ctx.fillStyle = '#000';
+    ctx.beginPath();
+    ctx.arc(x, y, 10, 0, Math.PI * 2);
+    ctx.fill();
+    // U-magnet shape
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.arc(x, y, 16, Math.PI * 0.2, Math.PI * 0.8);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(x, y, 16, Math.PI * 1.2, Math.PI * 1.8);
+    ctx.stroke();
   }
 
   // ── SPIKE TEETH HELPERS ────────────────────────────────

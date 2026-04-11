@@ -51,7 +51,7 @@ export default function Game({ levelId, onLevelComplete, onExit, onHelp }) {
       }
       // Seamless: load next level directly in engine, no unmount
       const nextId = result.levelId + 1;
-      if (nextId <= 20) {
+      if (nextId <= 50) {
         AudioSystem.play('LEVEL_COMPLETE');
         engine.seamlessNextLevel(nextId);
       } else {
@@ -192,7 +192,7 @@ export default function Game({ levelId, onLevelComplete, onExit, onHelp }) {
             LOBBY
           </button>
           {/* Skip level for 250 gems */}
-          {levelId <= 20 && (
+          {levelId <= 50 && (
             <button
               onClick={() => {
                 const st = Store.getState();

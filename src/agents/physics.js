@@ -31,6 +31,10 @@ export function checkCollisions(ball, obstacles, gemPositions, collectedGems) {
     rampBounce: null,
     gravityMult: null,
     vanishTouch: null,
+    tubeTransport: null,
+    bounceEffect: null,
+    trampolineBounce: null,
+    magnetPull: null,
   };
 
   for (const obs of obstacles) {
@@ -119,6 +123,48 @@ export function checkCollisions(ball, obstacles, gemPositions, collectedGems) {
       case 'fan': {
         if (checkFanZone(ball, obs)) {
           result.gravityMult = obs.gravityMult;
+        }
+        break;
+      }
+
+      case 'tube': {
+        // Check if ball enters the tube entry point
+        const dx = ball.x - obs.entryX;
+        const dy = ball.y - obs.entryY;
+        if (dx * dx + dy * dy < (ball.radius + obs.tubeWidth / 2) * (ball.radius + obs.tubeWidth / 2)) {
+          if (!result.tubeTransport) {
+            result.tubeTransport = { exitX: obs.exitX, exitY: obs.exitY };
+          }
+        }
+        break;
+      }
+
+      case 'bounce': {
+        if (circleRectCollision(ball, obs.bounceX, obs.bounceY, obs.bounceW, obs.bounceH)) {
+          result.bounceEffect = { factor: obs.bounceFactor };
+        }
+        break;
+      }
+
+      case 'trampoline': {
+        const tResult = checkPlatformCollision(ball, {
+          drawX: obs.tramX, currentY: obs.tramY, width: obs.tramW, height: obs.tramH
+        });
+        if (tResult === 'ride') {
+          result.trampolineBounce = obs;
+        }
+        break;
+      }
+
+      case 'magnet': {
+        const mdx = ball.x - obs.magX;
+        const mdy = ball.y - obs.magY;
+        const mDist = Math.sqrt(mdx * mdx + mdy * mdy);
+        if (mDist < obs.magRadius && mDist > 5) {
+          result.magnetPull = {
+            dx: -mdx / mDist * obs.magStrength,
+            dy: -mdy / mDist * obs.magStrength,
+          };
         }
         break;
       }
