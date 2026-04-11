@@ -5,14 +5,14 @@
 
 import { useState, useEffect } from 'react';
 import { Store } from '../agents/store.js';
-import { LEVELS } from '../agents/levels.js';
+import { LEVELS, getLevel } from '../agents/levels.js';
 
 /**
  * @param {Object} props
  * @param {Function} props.onPlay - Called with levelId when user taps play
  * @param {Function} props.onOpenShop - Opens shop overlay
  */
-export default function Lobby({ onPlay, onOpenShop, onOpenTimeTrial, onOpenInfinity, onOpenLeaderboard, onOpenAccount, onSubmitGems }) {
+export default function Lobby({ onPlay, onOpenShop, onOpenTimeTrial, onOpenInfinity, onOpenLeaderboard, onOpenAccount }) {
   const [state, setState] = useState(Store.getState());
 
   useEffect(() => {
@@ -20,6 +20,7 @@ export default function Lobby({ onPlay, onOpenShop, onOpenTimeTrial, onOpenInfin
   }, []);
 
   const { currentLevel, completedLevels, gems, upgrades } = state;
+  const nextLevel = getLevel(currentLevel);
 
   return (
     <div style={{
@@ -45,7 +46,9 @@ export default function Lobby({ onPlay, onOpenShop, onOpenTimeTrial, onOpenInfin
             background: '#EEE', border: 'none', borderRadius: '50%',
             width: 30, height: 30, fontSize: 14, cursor: 'pointer',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>👤</button>
+          }}>
+            {Store.getSelectedIcon() || '👤'}
+          </button>
           <div style={{ fontSize: '20px', fontWeight: 'bold', letterSpacing: '2px' }}>
             TUBE FALL
           </div>
@@ -61,23 +64,6 @@ export default function Lobby({ onPlay, onOpenShop, onOpenTimeTrial, onOpenInfin
           }}>
             ◆ {gems}
           </div>
-          <button
-            onClick={() => onSubmitGems(gems)}
-            style={{
-              background: '#FFD700',
-              color: '#000',
-              border: 'none',
-              padding: '4px 6px',
-              borderRadius: '6px',
-              fontSize: '10px',
-              cursor: 'pointer',
-              fontFamily: 'monospace',
-              fontWeight: 'bold',
-            }}
-            title="Submit gems to leaderboard"
-          >
-            👑
-          </button>
           <button
             onClick={onOpenShop}
             style={{
@@ -145,12 +131,62 @@ export default function Lobby({ onPlay, onOpenShop, onOpenTimeTrial, onOpenInfin
         </div>
       </div>
 
+      {/* Big PLAY button for current level */}
+      {nextLevel && currentLevel <= 50 && (
+        <div
+          onClick={() => onPlay(currentLevel)}
+          style={{
+            margin: '12px 16px 0',
+            padding: '14px 20px',
+            backgroundColor: nextLevel.color,
+            borderRadius: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            cursor: 'pointer',
+            flexShrink: 0,
+            boxShadow: '0 3px 10px rgba(0,0,0,0.15)',
+          }}
+        >
+          <div>
+            <div style={{ fontSize: '11px', color: 'rgba(0,0,0,0.5)', fontWeight: 'bold' }}>
+              CONTINUE
+            </div>
+            <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#000' }}>
+              LEVEL {currentLevel}
+            </div>
+          </div>
+          <div style={{
+            backgroundColor: '#000',
+            color: '#FFF',
+            padding: '10px 24px',
+            borderRadius: '8px',
+            fontSize: '16px',
+            fontWeight: 'bold',
+          }}>
+            PLAY
+          </div>
+        </div>
+      )}
+
+      {currentLevel > 50 && (
+        <div style={{
+          margin: '12px 16px 0', padding: '14px 20px',
+          backgroundColor: '#2ECC71', borderRadius: '12px',
+          textAlign: 'center', flexShrink: 0,
+        }}>
+          <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#000' }}>
+            ALL 50 LEVELS COMPLETE!
+          </div>
+        </div>
+      )}
+
       {/* Stats bar */}
       <div style={{
         display: 'flex',
         justifyContent: 'center',
         gap: '20px',
-        padding: '12px 20px',
+        padding: '10px 20px',
         borderBottom: '1px solid #DDD',
         fontSize: '12px',
         color: '#666',
@@ -227,21 +263,6 @@ export default function Lobby({ onPlay, onOpenShop, onOpenTimeTrial, onOpenInfin
               }}>
                 ◆ {level.gems + level.bonusGems}
               </div>
-
-              {/* Play button for current level */}
-              {isNext && (
-                <div style={{
-                  marginLeft: '10px',
-                  backgroundColor: level.color,
-                  color: level.id === 20 ? '#FFF' : '#000',
-                  padding: '6px 14px',
-                  borderRadius: '6px',
-                  fontWeight: 'bold',
-                  fontSize: '13px',
-                }}>
-                  PLAY
-                </div>
-              )}
             </div>
           );
         })}

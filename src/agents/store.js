@@ -22,6 +22,8 @@ const DEFAULT_STATE = {
     particleDesign: 0,
   },
   ownedParticles: [0], // particle design IDs owned
+  ownedIcons: [0], // profile icon indices owned (0 = default)
+  selectedIcon: 0, // selected profile icon index
   firstAttemptLevels: [],
   totalDeaths: 0,
   totalGems: 0,
@@ -354,6 +356,40 @@ export const Store = {
   /** Check if a trial has been completed. */
   isTrialCompleted(trialId) {
     return (state.timeTrialCompleted || []).includes(trialId);
+  },
+
+  // ── PROFILE ICONS ────────────────────────
+
+  getOwnedIcons() {
+    return state.ownedIcons || [0];
+  },
+
+  getSelectedIcon() {
+    const ICONS = ['👤', '🎮', '🔥', '⭐', '💀', '🎯', '🌈', '👑', '🤖', '💎'];
+    const idx = state.selectedIcon || 0;
+    return ICONS[idx] || '👤';
+  },
+
+  getSelectedIconIndex() {
+    return state.selectedIcon || 0;
+  },
+
+  purchaseIcon(iconIndex, cost) {
+    if (!state.ownedIcons) state.ownedIcons = [0];
+    if (state.ownedIcons.includes(iconIndex)) return false;
+    if (state.gems < cost) return false;
+    state.gems -= cost;
+    state.ownedIcons.push(iconIndex);
+    state.selectedIcon = iconIndex;
+    notify();
+    return true;
+  },
+
+  selectIcon(iconIndex) {
+    if (!state.ownedIcons) state.ownedIcons = [0];
+    if (!state.ownedIcons.includes(iconIndex)) return;
+    state.selectedIcon = iconIndex;
+    notify();
   },
 
   /** Reset all progress. */

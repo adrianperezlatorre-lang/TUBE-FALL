@@ -281,6 +281,9 @@ export default function Shop({ onClose }) {
           </div>
         </div>
 
+        {/* PROFILE ICONS */}
+        <ProfileIcons />
+
         {/* CODES */}
         <CodeRedeemer />
         </div>
@@ -477,6 +480,84 @@ function starPoints(cx, cy, spikes, outerR, innerR) {
     rot += step;
   }
   return pts.join(' ');
+}
+
+const PROFILE_ICONS = [
+  { emoji: '👤', name: 'Default', cost: 0 },
+  { emoji: '🎮', name: 'Gamer', cost: 20 },
+  { emoji: '🔥', name: 'Fire', cost: 25 },
+  { emoji: '⭐', name: 'Star', cost: 30 },
+  { emoji: '💀', name: 'Skull', cost: 35 },
+  { emoji: '🎯', name: 'Target', cost: 40 },
+  { emoji: '🌈', name: 'Rainbow', cost: 50 },
+  { emoji: '👑', name: 'Crown', cost: 60 },
+  { emoji: '🤖', name: 'Robot', cost: 75 },
+  { emoji: '💎', name: 'Diamond', cost: 100 },
+];
+
+function ProfileIcons() {
+  const [, forceUpdate] = useState(0);
+  const owned = Store.getOwnedIcons();
+  const selected = Store.getSelectedIconIndex();
+  const gems = Store.getState().gems;
+  const hasFree = Store.getFreeItems() > 0;
+
+  return (
+    <div>
+      <div style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '12px' }}>Profile Icon</div>
+      <div style={{
+        display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '8px',
+      }}>
+        {PROFILE_ICONS.map((icon, idx) => {
+          const isOwned = owned.includes(idx);
+          const isSelected = selected === idx;
+          const canBuy = !isOwned && gems >= icon.cost;
+
+          return (
+            <div key={idx} onClick={() => {
+              if (isOwned) {
+                Store.selectIcon(idx);
+                forceUpdate(n => n + 1);
+              }
+            }} style={{
+              border: isSelected ? '3px solid #000' : '2px solid #CCC',
+              borderRadius: '10px', padding: '8px 4px',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px',
+              cursor: isOwned ? 'pointer' : 'default',
+              backgroundColor: isSelected ? '#E8E8E8' : '#FFF',
+            }}>
+              <div style={{ fontSize: '24px' }}>{icon.emoji}</div>
+              <div style={{ fontSize: '8px', fontWeight: 'bold', textAlign: 'center' }}>{icon.name}</div>
+              {idx === 0 ? (
+                <div style={{ fontSize: '8px', color: '#888' }}>FREE</div>
+              ) : isOwned ? (
+                <div style={{ fontSize: '8px', color: isSelected ? '#000' : '#888' }}>
+                  {isSelected ? 'ACTIVE' : 'SELECT'}
+                </div>
+              ) : (
+                <button onClick={(e) => {
+                  e.stopPropagation();
+                  if (hasFree) {
+                    Store.useFreeItem();
+                    Store.purchaseIcon(idx, 0);
+                  } else {
+                    Store.purchaseIcon(idx, icon.cost);
+                  }
+                  forceUpdate(n => n + 1);
+                }} disabled={!canBuy && !hasFree} style={{
+                  fontSize: '8px', padding: '2px 5px', border: 'none', borderRadius: '3px',
+                  background: (canBuy || hasFree) ? '#FFD700' : '#DDD', color: '#000',
+                  cursor: (canBuy || hasFree) ? 'pointer' : 'default', fontFamily: 'monospace', fontWeight: 'bold',
+                }}>
+                  {hasFree ? 'FREE' : `◆ ${icon.cost}`}
+                </button>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
 
 function CodeRedeemer() {

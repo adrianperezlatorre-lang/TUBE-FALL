@@ -1,9 +1,13 @@
 /**
  * Account — Login/Create account overlay.
+ * Shows selected profile icon. Tap icon to cycle through owned icons.
  */
 
 import { useState } from 'react';
 import { createAccount, login, logout, getStoredAccount } from '../agents/supabase.js';
+import { Store } from '../agents/store.js';
+
+const ALL_ICONS = ['👤', '🎮', '🔥', '⭐', '💀', '🎯', '🌈', '👑', '🤖', '💎'];
 
 export default function Account({ onClose }) {
   const [account, setAccount] = useState(getStoredAccount());
@@ -12,6 +16,8 @@ export default function Account({ onClose }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showIconPicker, setShowIconPicker] = useState(false);
+  const [, forceUpdate] = useState(0);
 
   async function handleSubmit() {
     setError('');
@@ -33,14 +39,66 @@ export default function Account({ onClose }) {
     setAccount(null);
   }
 
+  const selectedIcon = Store.getSelectedIcon();
+  const ownedIcons = Store.getOwnedIcons();
+  const selectedIdx = Store.getSelectedIconIndex();
+
   // If logged in, show account info
   if (account) {
     return (
       <div style={overlay}>
         <div style={card}>
-          <div style={{ fontSize: 40, marginBottom: 12 }}>👤</div>
+          {/* Tappable icon */}
+          <div
+            onClick={() => setShowIconPicker(!showIconPicker)}
+            style={{
+              fontSize: 48, marginBottom: 8, cursor: 'pointer',
+              width: 64, height: 64, borderRadius: '50%',
+              backgroundColor: '#0d0d1a', border: '3px solid #333',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}
+          >
+            {selectedIcon}
+          </div>
+
+          {/* Icon picker */}
+          {showIconPicker && (
+            <div style={{
+              display: 'flex', flexWrap: 'wrap', gap: 6, justifyContent: 'center',
+              marginBottom: 12, padding: '10px', backgroundColor: '#0d0d1a',
+              borderRadius: 10, border: '1px solid #333',
+            }}>
+              {ownedIcons.map(idx => (
+                <div
+                  key={idx}
+                  onClick={() => {
+                    Store.selectIcon(idx);
+                    forceUpdate(n => n + 1);
+                    setShowIconPicker(false);
+                  }}
+                  style={{
+                    fontSize: 28, cursor: 'pointer', padding: '6px',
+                    borderRadius: 8,
+                    backgroundColor: selectedIdx === idx ? '#333' : 'transparent',
+                    border: selectedIdx === idx ? '2px solid #FFD700' : '2px solid transparent',
+                  }}
+                >
+                  {ALL_ICONS[idx]}
+                </div>
+              ))}
+              {ownedIcons.length <= 1 && (
+                <div style={{ fontSize: 10, color: '#555', padding: '4px' }}>
+                  Buy more icons in the SHOP
+                </div>
+              )}
+            </div>
+          )}
+
           <div style={{ fontSize: 18, fontWeight: 'bold' }}>@{account.username}</div>
           <div style={{ fontSize: 12, color: '#888', marginTop: 4 }}>Logged in</div>
+          <div style={{ fontSize: 10, color: '#555', marginTop: 4 }}>
+            Scores auto-submit to leaderboard
+          </div>
           <div style={{ display: 'flex', gap: 10, marginTop: 24 }}>
             <button onClick={handleLogout} style={btnDanger}>LOG OUT</button>
             <button onClick={onClose} style={btnGrey}>CLOSE</button>

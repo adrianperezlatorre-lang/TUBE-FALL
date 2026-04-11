@@ -73,6 +73,31 @@ export function logout() {
   try { localStorage.removeItem(ACCOUNT_KEY); } catch {}
 }
 
+// ── AUTO-SUBMIT ──────────────────────────────────
+
+/**
+ * Auto-submit a score if user is logged in (silent, no UI).
+ * @param {'gems'|'timing'|'infinity'} category
+ * @param {number} score
+ * @param {Object} [options] - { difficulty, trialId }
+ */
+export async function autoSubmitScore(category, score, options = {}) {
+  const account = getStoredAccount();
+  if (!account) return; // not logged in, skip
+  const entry = {
+    nickname: account.username,
+    category,
+    score,
+    user_id: account.id,
+    username: account.username,
+    difficulty: options.difficulty || null,
+    trial_id: options.trialId || null,
+  };
+  try {
+    await supabase.from('leaderboard').insert(entry);
+  } catch {}
+}
+
 // ── LEADERBOARD ───────────────────────────────────
 
 /**

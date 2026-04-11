@@ -9,6 +9,7 @@ import { usePersistence } from './hooks/usePersistence.js';
 import { AudioSystem } from './agents/audio.js';
 import { Store } from './agents/store.js';
 import { getLevel, getLevelCount } from './agents/levels.js';
+import { autoSubmitScore } from './agents/supabase.js';
 import Lobby from './components/Lobby.jsx';
 import Shop from './components/Shop.jsx';
 import Game from './components/Game.jsx';
@@ -19,7 +20,6 @@ import LevelTransition from './components/LevelTransition.jsx';
 import Tutorial, { isTutorialDone } from './components/Tutorial.jsx';
 import Leaderboard from './components/Leaderboard.jsx';
 import Account from './components/Account.jsx';
-import ScoreSubmit from './components/ScoreSubmit.jsx';
 
 const VIEW = {
   LOBBY: 'LOBBY',
@@ -48,7 +48,6 @@ export default function App() {
   const trialStartTime = useRef(0);
   const [infinityDifficulty, setInfinityDifficulty] = useState('medium');
   const [infinityResult, setInfinityResult] = useState(null);
-  const [showScoreSubmit, setShowScoreSubmit] = useState(null); // { category, score, options }
 
   const startLevel = useCallback((levelId) => {
     AudioSystem.unlock();
@@ -67,12 +66,16 @@ export default function App() {
   }, []);
 
   const handleLevelComplete = useCallback((result) => {
-    // For normal levels, seamless chaining is handled inside Game.jsx/engine
-    // This only fires when all 20 levels are done
+    // Auto-submit gems for logged-in users
+    const st = Store.getState();
+    autoSubmitScore('gems', st.gems);
     setView(VIEW.LOBBY);
   }, []);
 
   const handleExit = useCallback(() => {
+    // Auto-submit gems when returning to lobby
+    const st = Store.getState();
+    autoSubmitScore('gems', st.gems);
     setView(VIEW.LOBBY);
   }, []);
 
@@ -92,6 +95,10 @@ export default function App() {
       time: elapsed,
       ...reward,
     });
+    // Auto-submit timing + gems for logged-in users
+    autoSubmitScore('timing', elapsed, { trialId: result.levelId });
+    const st = Store.getState();
+    autoSubmitScore('gems', st.gems);
     setView(VIEW.TRIAL_RESULT);
   }, []);
 
@@ -122,11 +129,6 @@ export default function App() {
           onOpenInfinity={() => setView(VIEW.INFINITY_SELECT)}
           onOpenLeaderboard={() => setLeaderboardOpen(true)}
           onOpenAccount={() => setAccountOpen(true)}
-          onSubmitGems={(gems) => setShowScoreSubmit({
-            category: 'gems',
-            score: gems,
-            options: {},
-          })}
         />
       )}
 
@@ -204,21 +206,7 @@ export default function App() {
               GEM DOUBLER ACTIVATED (30 min)
             </div>
           )}
-          <button
-            onClick={() => setShowScoreSubmit({
-              category: 'timing',
-              score: trialResult.time,
-              options: { trialId: trialResult.trialId },
-            })}
-            style={{
-              background: '#FFD700', color: '#000', border: 'none', borderRadius: 8,
-              padding: '12px 28px', fontSize: 15, fontWeight: 'bold',
-              cursor: 'pointer', fontFamily: 'monospace', marginBottom: '12px',
-            }}
-          >
-            👑 SUBMIT SCORE
-          </button>
-          <div style={{ display: 'flex', gap: '12px' }}>
+          <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
             <button
               onClick={() => {
                 trialStartTime.current = performance.now();
@@ -299,6 +287,10 @@ export default function App() {
           key={`inf-${Date.now()}`}
           difficulty={infinityDifficulty}
           onGameOver={(result) => {
+            // Auto-submit infinity + gems for logged-in users
+            autoSubmitScore('infinity', result.distance, { difficulty: result.difficulty });
+            const st = Store.getState();
+            autoSubmitScore('gems', st.gems);
             setInfinityResult(result);
             setView(VIEW.INFINITY_RESULT);
           }}
@@ -321,23 +313,9 @@ export default function App() {
           <div style={{ fontSize: '14px', color: '#666', marginBottom: '20px' }}>
             {infinityResult.difficulty.toUpperCase()}
           </div>
-          <div style={{ fontSize: '22px', color: '#FFD700', fontWeight: 'bold', marginBottom: '20px' }}>
+          <div style={{ fontSize: '22px', color: '#FFD700', fontWeight: 'bold', marginBottom: '30px' }}>
             ◆ +{infinityResult.gems} gems
           </div>
-          <button
-            onClick={() => setShowScoreSubmit({
-              category: 'infinity',
-              score: infinityResult.distance,
-              options: { difficulty: infinityResult.difficulty },
-            })}
-            style={{
-              background: '#FFD700', color: '#000', border: 'none', borderRadius: 8,
-              padding: '12px 28px', fontSize: 15, fontWeight: 'bold',
-              cursor: 'pointer', fontFamily: 'monospace', marginBottom: '12px',
-            }}
-          >
-            👑 SUBMIT SCORE
-          </button>
           <div style={{ display: 'flex', gap: '12px' }}>
             <button
               onClick={() => setView(VIEW.INFINITY_PLAYING)}
@@ -373,15 +351,6 @@ export default function App() {
 
       {accountOpen && (
         <Account onClose={() => setAccountOpen(false)} />
-      )}
-
-      {showScoreSubmit && (
-        <ScoreSubmit
-          category={showScoreSubmit.category}
-          score={showScoreSubmit.score}
-          options={showScoreSubmit.options}
-          onDone={() => setShowScoreSubmit(null)}
-        />
       )}
     </>
   );
