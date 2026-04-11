@@ -17,7 +17,7 @@ import { useInput } from '../hooks/useInput.js';
  * @param {Function} props.onLevelComplete - Called when level is beaten
  * @param {Function} props.onExit - Return to lobby
  */
-export default function Game({ levelId, onLevelComplete, onExit }) {
+export default function Game({ levelId, onLevelComplete, onExit, onHelp }) {
   const canvasRef = useRef(null);
   const engineRef = useRef(null);
   const [paused, setPaused] = useState(false);
@@ -220,6 +220,17 @@ export default function Game({ levelId, onLevelComplete, onExit }) {
               }}
             >
               SKIP LEVEL ◆ 250
+            </button>
+          )}
+          {onHelp && (
+            <button
+              onClick={() => {
+                setPaused(false);
+                onHelp();
+              }}
+              style={{ ...pauseMenuBtn, marginTop: '12px', backgroundColor: '#74B9FF', color: '#000' }}
+            >
+              HELP
             </button>
           )}
         </div>

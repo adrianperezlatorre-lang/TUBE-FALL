@@ -171,8 +171,8 @@ export class GameEngine {
         AudioSystem.play('JUMP');
       }
     } else if (this.isInLowGravity()) {
-      // In low gravity zone: fast horizontal dash, no vertical jump
-      this.ball.vx = sign * 8 * this.jumpPower;
+      // In low gravity zone: gentle nudge (8x less than normal jump)
+      this.ball.vx += sign * (CONFIG.JUMP_VX / 8) * this.jumpPower;
       AudioSystem.play('JUMP');
     } else {
       // In the air: normal diagonal jump
@@ -279,12 +279,12 @@ export class GameEngine {
         ball.vx *= 0.96; // light drag while rolling
       }
     } else {
-      // In low gravity: holding direction = continuous fast movement
+      // In low gravity: gentle continuous drift (8x less than normal)
       if (this.isInLowGravity()) {
-        const accel = 1.2;
+        const accel = 0.15;
         if (heldDirection.left) ball.vx -= accel;
         if (heldDirection.right) ball.vx += accel;
-        const maxSpeed = 8;
+        const maxSpeed = 2;
         if (ball.vx > maxSpeed) ball.vx = maxSpeed;
         if (ball.vx < -maxSpeed) ball.vx = -maxSpeed;
       }

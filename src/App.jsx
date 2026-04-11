@@ -131,6 +131,7 @@ export default function App() {
           levelId={currentLevelId}
           onLevelComplete={handleLevelComplete}
           onExit={handleExit}
+          onHelp={() => setShowTutorial(true)}
         />
       )}
 
