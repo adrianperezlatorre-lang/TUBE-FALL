@@ -167,19 +167,24 @@ export default function InfinityGame({ difficulty, onGameOver, onExit }) {
 
     engine.draw(ctx);
 
-    // HUD: lives + distance
+    // HUD: lives as dots below level pill
     const lv = livesRef.current;
-    ctx.font = 'bold 12px monospace';
-    ctx.textAlign = 'left';
-    ctx.fillStyle = '#FF4444';
-    let hearts = '';
-    for (let i = 0; i < lv; i++) hearts += '\u2665';
-    for (let i = lv; i < MAX_LIVES; i++) hearts += '\u2661';
-    ctx.fillText(hearts, 8, 48);
+    const dotSize = 6;
+    const dotGap = 3;
+    const totalDotsW = MAX_LIVES * dotSize + (MAX_LIVES - 1) * dotGap;
+    const dotsStartX = (CONFIG.CANVAS_WIDTH - totalDotsW) / 2;
+    for (let i = 0; i < MAX_LIVES; i++) {
+      ctx.fillStyle = i < lv ? '#FF4444' : 'rgba(255,255,255,0.3)';
+      ctx.beginPath();
+      ctx.arc(dotsStartX + i * (dotSize + dotGap) + dotSize / 2, 42, dotSize / 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
 
-    ctx.fillStyle = '#FFF';
+    // Distance - bottom center
+    ctx.fillStyle = 'rgba(0,0,0,0.5)';
+    ctx.font = 'bold 14px monospace';
     ctx.textAlign = 'center';
-    ctx.fillText(Math.floor(maxYRef.current) + 'm', CONFIG.CANVAS_WIDTH / 2, 48);
+    ctx.fillText(Math.floor(maxYRef.current) + 'm', CONFIG.CANVAS_WIDTH / 2, CONFIG.CANVAS_HEIGHT - 12);
   }, [engine, loading, difficulty]);
 
   useGameLoop(update, draw, true);
