@@ -19,6 +19,7 @@ import LevelTransition from './components/LevelTransition.jsx';
 import Tutorial, { isTutorialDone } from './components/Tutorial.jsx';
 import Leaderboard from './components/Leaderboard.jsx';
 import Account from './components/Account.jsx';
+import ScoreSubmit from './components/ScoreSubmit.jsx';
 
 const VIEW = {
   LOBBY: 'LOBBY',
@@ -47,6 +48,7 @@ export default function App() {
   const trialStartTime = useRef(0);
   const [infinityDifficulty, setInfinityDifficulty] = useState('medium');
   const [infinityResult, setInfinityResult] = useState(null);
+  const [showScoreSubmit, setShowScoreSubmit] = useState(null); // { category, score, options }
 
   const startLevel = useCallback((levelId) => {
     AudioSystem.unlock();
@@ -197,7 +199,21 @@ export default function App() {
               GEM DOUBLER ACTIVATED (30 min)
             </div>
           )}
-          <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
+          <button
+            onClick={() => setShowScoreSubmit({
+              category: 'timing',
+              score: trialResult.time,
+              options: { trialId: trialResult.trialId },
+            })}
+            style={{
+              background: '#FFD700', color: '#000', border: 'none', borderRadius: 8,
+              padding: '12px 28px', fontSize: 15, fontWeight: 'bold',
+              cursor: 'pointer', fontFamily: 'monospace', marginBottom: '12px',
+            }}
+          >
+            👑 SUBMIT SCORE
+          </button>
+          <div style={{ display: 'flex', gap: '12px' }}>
             <button
               onClick={() => {
                 trialStartTime.current = performance.now();
@@ -300,9 +316,23 @@ export default function App() {
           <div style={{ fontSize: '14px', color: '#666', marginBottom: '20px' }}>
             {infinityResult.difficulty.toUpperCase()}
           </div>
-          <div style={{ fontSize: '22px', color: '#FFD700', fontWeight: 'bold', marginBottom: '30px' }}>
+          <div style={{ fontSize: '22px', color: '#FFD700', fontWeight: 'bold', marginBottom: '20px' }}>
             ◆ +{infinityResult.gems} gems
           </div>
+          <button
+            onClick={() => setShowScoreSubmit({
+              category: 'infinity',
+              score: infinityResult.distance,
+              options: { difficulty: infinityResult.difficulty },
+            })}
+            style={{
+              background: '#FFD700', color: '#000', border: 'none', borderRadius: 8,
+              padding: '12px 28px', fontSize: 15, fontWeight: 'bold',
+              cursor: 'pointer', fontFamily: 'monospace', marginBottom: '12px',
+            }}
+          >
+            👑 SUBMIT SCORE
+          </button>
           <div style={{ display: 'flex', gap: '12px' }}>
             <button
               onClick={() => setView(VIEW.INFINITY_PLAYING)}
@@ -338,6 +368,15 @@ export default function App() {
 
       {accountOpen && (
         <Account onClose={() => setAccountOpen(false)} />
+      )}
+
+      {showScoreSubmit && (
+        <ScoreSubmit
+          category={showScoreSubmit.category}
+          score={showScoreSubmit.score}
+          options={showScoreSubmit.options}
+          onDone={() => setShowScoreSubmit(null)}
+        />
       )}
     </>
   );

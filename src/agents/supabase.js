@@ -102,14 +102,24 @@ export async function submitScore(category, score, nickname, options = {}) {
  * Get leaderboard rankings.
  * @param {'gems'|'timing'|'infinity'} category
  * @param {number} limit
+ * @param {Object} [filters] - { trialId, difficulty }
  * @returns {Promise<Array>}
  */
-export async function getLeaderboard(category, limit = 50) {
+export async function getLeaderboard(category, limit = 50, filters = {}) {
   const ascending = category === 'timing'; // lower time = better
-  const { data, error } = await supabase
+  let query = supabase
     .from('leaderboard')
     .select('nickname, username, score, difficulty, trial_id, created_at')
-    .eq('category', category)
+    .eq('category', category);
+
+  if (filters.trialId) {
+    query = query.eq('trial_id', filters.trialId);
+  }
+  if (filters.difficulty) {
+    query = query.eq('difficulty', filters.difficulty);
+  }
+
+  const { data, error } = await query
     .order('score', { ascending })
     .limit(limit);
 

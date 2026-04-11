@@ -141,7 +141,7 @@ export default function Lobby({ onPlay, onOpenShop, onOpenTimeTrial, onOpenInfin
       }}>
         <span>Jump: {'●'.repeat(upgrades.jumpPower)}{'○'.repeat(3 - upgrades.jumpPower)}</span>
         <span>Speed: {'●'.repeat(upgrades.fallSpeed)}{'○'.repeat(3 - upgrades.fallSpeed)}</span>
-        <span>Levels: {completedLevels.length}/20</span>
+        <span>Levels: {completedLevels.length}/50</span>
       </div>
 
       {/* Level list */}

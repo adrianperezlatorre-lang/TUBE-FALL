@@ -108,7 +108,7 @@ export const Store = {
       state.firstAttemptLevels.push(levelId);
     }
     // Unlock next level
-    if (levelId >= state.currentLevel && levelId < 20) {
+    if (levelId >= state.currentLevel && levelId < 50) {
       state.currentLevel = levelId + 1;
     }
     state.gems += gemsEarned;

@@ -1,28 +1,47 @@
 /**
  * Leaderboard — Worldwide rankings for gems, timing, and infinity.
+ * Timing has sub-tabs per trial (1/2/3), Infinity has sub-tabs per difficulty.
  */
 
 import { useState, useEffect } from 'react';
 import { getLeaderboard } from '../agents/supabase.js';
 
 const TABS = [
-  { key: 'gems', label: 'GEMS', icon: '◆', unit: '', desc: 'Most gems accumulated' },
-  { key: 'timing', label: 'TIMING', icon: '⏱', unit: 's', desc: 'Fastest trial time' },
-  { key: 'infinity', label: 'INFINITY', icon: '∞', unit: 'm', desc: 'Farthest distance' },
+  { key: 'gems', label: 'GEMS', icon: '◆', desc: 'Most gems accumulated' },
+  { key: 'timing', label: 'TIMING', icon: '⏱', desc: 'Fastest trial time' },
+  { key: 'infinity', label: 'INFINITY', icon: '∞', desc: 'Farthest distance' },
+];
+
+const TRIAL_SUBS = [
+  { key: 101, label: 'TRIAL 1' },
+  { key: 102, label: 'TRIAL 2' },
+  { key: 103, label: 'TRIAL 3' },
+];
+
+const DIFF_SUBS = [
+  { key: 'easy', label: 'EASY' },
+  { key: 'medium', label: 'MEDIUM' },
+  { key: 'hard', label: 'HARD' },
 ];
 
 export default function Leaderboard({ onClose }) {
   const [tab, setTab] = useState('gems');
+  const [trialSub, setTrialSub] = useState(101);
+  const [diffSub, setDiffSub] = useState('medium');
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setLoading(true);
-    getLeaderboard(tab, 50).then((data) => {
+    const filters = {};
+    if (tab === 'timing') filters.trialId = trialSub;
+    if (tab === 'infinity') filters.difficulty = diffSub;
+
+    getLeaderboard(tab, 50, filters).then((data) => {
       setEntries(data);
       setLoading(false);
     });
-  }, [tab]);
+  }, [tab, trialSub, diffSub]);
 
   const currentTab = TABS.find(t => t.key === tab);
 
@@ -49,7 +68,7 @@ export default function Leaderboard({ onClose }) {
         }}>✕</button>
       </div>
 
-      {/* Tabs */}
+      {/* Main Tabs */}
       <div style={{ display: 'flex', borderBottom: '1px solid #222' }}>
         {TABS.map(t => (
           <button key={t.key} onClick={() => setTab(t.key)} style={{
@@ -63,9 +82,43 @@ export default function Leaderboard({ onClose }) {
         ))}
       </div>
 
+      {/* Sub-tabs for Timing */}
+      {tab === 'timing' && (
+        <div style={{ display: 'flex', borderBottom: '1px solid #1a1a2e', backgroundColor: '#0d0d18' }}>
+          {TRIAL_SUBS.map(s => (
+            <button key={s.key} onClick={() => setTrialSub(s.key)} style={{
+              flex: 1, padding: '8px 0', background: 'none', border: 'none',
+              color: trialSub === s.key ? '#E74C3C' : '#555',
+              borderBottom: trialSub === s.key ? '2px solid #E74C3C' : '2px solid transparent',
+              fontSize: 11, fontWeight: 'bold', cursor: 'pointer', fontFamily: 'monospace',
+            }}>
+              {s.label}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Sub-tabs for Infinity */}
+      {tab === 'infinity' && (
+        <div style={{ display: 'flex', borderBottom: '1px solid #1a1a2e', backgroundColor: '#0d0d18' }}>
+          {DIFF_SUBS.map(s => (
+            <button key={s.key} onClick={() => setDiffSub(s.key)} style={{
+              flex: 1, padding: '8px 0', background: 'none', border: 'none',
+              color: diffSub === s.key ? '#667eea' : '#555',
+              borderBottom: diffSub === s.key ? '2px solid #667eea' : '2px solid transparent',
+              fontSize: 11, fontWeight: 'bold', cursor: 'pointer', fontFamily: 'monospace',
+            }}>
+              {s.label}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Description */}
       <div style={{ textAlign: 'center', padding: '10px', fontSize: 11, color: '#555' }}>
         {currentTab?.desc}
+        {tab === 'timing' && ` — ${TRIAL_SUBS.find(s => s.key === trialSub)?.label}`}
+        {tab === 'infinity' && ` — ${DIFF_SUBS.find(s => s.key === diffSub)?.label}`}
       </div>
 
       {/* Rankings */}
@@ -109,16 +162,6 @@ export default function Leaderboard({ onClose }) {
                  tab === 'infinity' ? `${Math.floor(entry.score)}m` :
                  `◆ ${Math.floor(entry.score)}`}
               </div>
-
-              {/* Extra info */}
-              {entry.difficulty && (
-                <div style={{
-                  marginLeft: 8, fontSize: 9, color: '#555',
-                  backgroundColor: '#1a1a2e', padding: '2px 6px', borderRadius: 4,
-                }}>
-                  {entry.difficulty}
-                </div>
-              )}
             </div>
           ))
         )}
