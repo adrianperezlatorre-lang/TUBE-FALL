@@ -151,3 +151,204 @@ export async function getLeaderboard(category, limit = 50, filters = {}) {
   if (error) return [];
   return data || [];
 }
+
+// ── FRIENDS ──────────────────────────────────────
+
+/** Search users by username prefix */
+export async function searchUsers(query) {
+  const account = getStoredAccount();
+  if (!account) return [];
+  const { data, error } = await supabase
+    .from('users')
+    .select('id, username')
+    .ilike('username', `${query}%`)
+    .neq('id', account.id)
+    .limit(10);
+  if (error) return [];
+  return data || [];
+}
+
+/** Send friend request */
+export async function sendFriendRequest(toUserId) {
+  const account = getStoredAccount();
+  if (!account) return { success: false, error: 'Not logged in' };
+  const { error } = await supabase
+    .from('friend_requests')
+    .insert({ from_user_id: account.id, to_user_id: toUserId, status: 'pending' });
+  if (error) {
+    if (error.code === '23505') return { success: false, error: 'Already sent' };
+    return { success: false, error: error.message };
+  }
+  return { success: true };
+}
+
+/** Get pending friend requests received */
+export async function getFriendRequests() {
+  const account = getStoredAccount();
+  if (!account) return [];
+  const { data, error } = await supabase
+    .from('friend_requests')
+    .select('id, from_user_id, status, created_at')
+    .eq('to_user_id', account.id)
+    .eq('status', 'pending')
+    .order('created_at', { ascending: false });
+  if (error) return [];
+  // Resolve usernames
+  const userIds = (data || []).map(r => r.from_user_id);
+  if (userIds.length === 0) return [];
+  const { data: users } = await supabase
+    .from('users')
+    .select('id, username')
+    .in('id', userIds);
+  const userMap = {};
+  (users || []).forEach(u => { userMap[u.id] = u.username; });
+  return (data || []).map(r => ({ ...r, from_username: userMap[r.from_user_id] || '?' }));
+}
+
+/** Accept friend request */
+export async function acceptFriendRequest(requestId) {
+  const { error } = await supabase
+    .from('friend_requests')
+    .update({ status: 'accepted' })
+    .eq('id', requestId);
+  return !error;
+}
+
+/** Reject friend request */
+export async function rejectFriendRequest(requestId) {
+  const { error } = await supabase
+    .from('friend_requests')
+    .update({ status: 'rejected' })
+    .eq('id', requestId);
+  return !error;
+}
+
+/** Get accepted friends list */
+export async function getFriends() {
+  const account = getStoredAccount();
+  if (!account) return [];
+  // Friends where I sent request OR they sent to me, both accepted
+  const { data: sent } = await supabase
+    .from('friend_requests')
+    .select('to_user_id')
+    .eq('from_user_id', account.id)
+    .eq('status', 'accepted');
+  const { data: received } = await supabase
+    .from('friend_requests')
+    .select('from_user_id')
+    .eq('to_user_id', account.id)
+    .eq('status', 'accepted');
+  const friendIds = [
+    ...((sent || []).map(r => r.to_user_id)),
+    ...((received || []).map(r => r.from_user_id)),
+  ];
+  if (friendIds.length === 0) return [];
+  const { data: users } = await supabase
+    .from('users')
+    .select('id, username')
+    .in('id', friendIds);
+  return users || [];
+}
+
+// ── RACES ────────────────────────────────────────
+
+/** Create a new race map (seed-based) */
+export async function createRaceMap(seed, difficulty, height) {
+  const account = getStoredAccount();
+  if (!account) return null;
+  const { data, error } = await supabase
+    .from('race_maps')
+    .insert({ seed, difficulty, height, created_by: account.id })
+    .select()
+    .single();
+  if (error) return null;
+  return data;
+}
+
+/** Get a race map by ID */
+export async function getRaceMap(raceMapId) {
+  const { data } = await supabase
+    .from('race_maps')
+    .select('*')
+    .eq('id', raceMapId)
+    .single();
+  return data;
+}
+
+/** Submit a race run (time + ball recording) */
+export async function submitRaceRun(raceMapId, timeMs, ballRecording) {
+  const account = getStoredAccount();
+  if (!account) return null;
+  const iconIdx = parseInt(localStorage.getItem('tubeFall_selectedIcon') || '0');
+  const { data, error } = await supabase
+    .from('race_runs')
+    .insert({
+      race_map_id: raceMapId,
+      user_id: account.id,
+      username: account.username,
+      icon_index: iconIdx,
+      time_ms: timeMs,
+      ball_recording: ballRecording,
+    })
+    .select()
+    .single();
+  if (error) return null;
+  return data;
+}
+
+/** Get all runs for a race map */
+export async function getRaceRuns(raceMapId) {
+  const { data } = await supabase
+    .from('race_runs')
+    .select('*')
+    .eq('race_map_id', raceMapId)
+    .order('time_ms', { ascending: true });
+  return data || [];
+}
+
+/** Send race invite to a friend */
+export async function sendRaceInvite(raceMapId, toUserId) {
+  const account = getStoredAccount();
+  if (!account) return { success: false };
+  const { error } = await supabase
+    .from('race_invites')
+    .insert({ race_map_id: raceMapId, from_user_id: account.id, to_user_id: toUserId });
+  if (error) return { success: false, error: error.message };
+  return { success: true };
+}
+
+/** Get race invites received */
+export async function getRaceInvites() {
+  const account = getStoredAccount();
+  if (!account) return [];
+  const { data, error } = await supabase
+    .from('race_invites')
+    .select('id, race_map_id, from_user_id, created_at')
+    .eq('to_user_id', account.id)
+    .order('created_at', { ascending: false })
+    .limit(20);
+  if (error) return [];
+  // Resolve usernames
+  const userIds = (data || []).map(r => r.from_user_id);
+  if (userIds.length === 0) return [];
+  const { data: users } = await supabase
+    .from('users')
+    .select('id, username')
+    .in('id', userIds);
+  const userMap = {};
+  (users || []).forEach(u => { userMap[u.id] = u.username; });
+  return (data || []).map(r => ({ ...r, from_username: userMap[r.from_user_id] || '?' }));
+}
+
+/** Get races I created */
+export async function getMyRaces() {
+  const account = getStoredAccount();
+  if (!account) return [];
+  const { data } = await supabase
+    .from('race_maps')
+    .select('*')
+    .eq('created_by', account.id)
+    .order('created_at', { ascending: false })
+    .limit(20);
+  return data || [];
+}

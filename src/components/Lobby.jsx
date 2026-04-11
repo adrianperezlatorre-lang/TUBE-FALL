@@ -12,7 +12,7 @@ import { LEVELS, getLevel } from '../agents/levels.js';
  * @param {Function} props.onPlay - Called with levelId when user taps play
  * @param {Function} props.onOpenShop - Opens shop overlay
  */
-export default function Lobby({ onPlay, onOpenShop, onOpenTimeTrial, onOpenInfinity, onOpenLeaderboard, onOpenAccount }) {
+export default function Lobby({ onPlay, onOpenShop, onOpenTimeTrial, onOpenInfinity, onOpenLeaderboard, onOpenAccount, onOpenFriends }) {
   const [state, setState] = useState(Store.getState());
 
   useEffect(() => {
@@ -111,6 +111,22 @@ export default function Lobby({ onPlay, onOpenShop, onOpenTimeTrial, onOpenInfin
             }}
           >
             ∞
+          </button>
+          <button
+            onClick={onOpenFriends}
+            style={{
+              background: '#667eea',
+              color: '#FFF',
+              border: 'none',
+              padding: '5px 8px',
+              borderRadius: '6px',
+              fontSize: '11px',
+              cursor: 'pointer',
+              fontFamily: 'monospace',
+              fontWeight: 'bold',
+            }}
+          >
+            FRIENDS
           </button>
           <button
             onClick={onOpenLeaderboard}

@@ -9,7 +9,8 @@ import { usePersistence } from './hooks/usePersistence.js';
 import { AudioSystem } from './agents/audio.js';
 import { Store } from './agents/store.js';
 import { getLevel, getLevelCount } from './agents/levels.js';
-import { autoSubmitScore } from './agents/supabase.js';
+import { autoSubmitScore, createRaceMap, sendRaceInvite } from './agents/supabase.js';
+import { randomSeed } from './agents/raceGenerator.js';
 import Lobby from './components/Lobby.jsx';
 import Shop from './components/Shop.jsx';
 import Game from './components/Game.jsx';
@@ -20,6 +21,8 @@ import LevelTransition from './components/LevelTransition.jsx';
 import Tutorial, { isTutorialDone } from './components/Tutorial.jsx';
 import Leaderboard from './components/Leaderboard.jsx';
 import Account from './components/Account.jsx';
+import Friends from './components/Friends.jsx';
+import RaceGame from './components/RaceGame.jsx';
 
 const VIEW = {
   LOBBY: 'LOBBY',
@@ -31,6 +34,7 @@ const VIEW = {
   INFINITY_SELECT: 'INFINITY_SELECT',
   INFINITY_PLAYING: 'INFINITY_PLAYING',
   INFINITY_RESULT: 'INFINITY_RESULT',
+  RACE_PLAYING: 'RACE_PLAYING',
 };
 
 export default function App() {
@@ -48,6 +52,8 @@ export default function App() {
   const trialStartTime = useRef(0);
   const [infinityDifficulty, setInfinityDifficulty] = useState('medium');
   const [infinityResult, setInfinityResult] = useState(null);
+  const [friendsOpen, setFriendsOpen] = useState(false);
+  const [raceMapId, setRaceMapId] = useState(null);
 
   const startLevel = useCallback((levelId) => {
     AudioSystem.unlock();
@@ -129,6 +135,7 @@ export default function App() {
           onOpenInfinity={() => setView(VIEW.INFINITY_SELECT)}
           onOpenLeaderboard={() => setLeaderboardOpen(true)}
           onOpenAccount={() => setAccountOpen(true)}
+          onOpenFriends={() => setFriendsOpen(true)}
         />
       )}
 
@@ -351,6 +358,35 @@ export default function App() {
 
       {accountOpen && (
         <Account onClose={() => setAccountOpen(false)} />
+      )}
+
+      {friendsOpen && (
+        <Friends
+          onClose={() => setFriendsOpen(false)}
+          onCreateRace={async (friendId) => {
+            const seed = randomSeed();
+            const map = await createRaceMap(seed, 'medium', 6000);
+            if (map) {
+              await sendRaceInvite(map.id, friendId);
+              setFriendsOpen(false);
+              setRaceMapId(map.id);
+              setView(VIEW.RACE_PLAYING);
+            }
+          }}
+          onJoinRace={(mapId) => {
+            setFriendsOpen(false);
+            setRaceMapId(mapId);
+            setView(VIEW.RACE_PLAYING);
+          }}
+        />
+      )}
+
+      {view === VIEW.RACE_PLAYING && raceMapId && (
+        <RaceGame
+          key={`race-${raceMapId}`}
+          raceMapId={raceMapId}
+          onExit={() => setView(VIEW.LOBBY)}
+        />
       )}
     </>
   );
