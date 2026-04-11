@@ -86,41 +86,46 @@ export default function InfinityGame({ difficulty, onGameOver, onExit }) {
   const update = useCallback((dt) => {
     if (paused || loading || gameOverRef.current) return;
 
-    // If dead: handle custom respawn near death
-    if (engine.state === STATE.DEAD) {
-      engine.deathTimer += dt;
-      for (const p of engine.particles) {
-        p.x += p.vx; p.y += p.vy; p.vy += 0.15;
-        p.life -= dt; p.size *= 0.96;
+    // Capture death position BEFORE engine resets it
+    if (engine.state === STATE.DEAD && engine.deathTimer === 0) {
+      // First frame of death — save position now
+      deathYRef.current = engine.ball.y;
+    }
+
+    // Let engine handle its own death animation + reset
+    // Then intercept AFTER reset to fix the spawn position
+    const wasDead = engine.state === STATE.DEAD;
+    const wasNearEnd = wasDead && engine.deathTimer + dt >= CONFIG.DEATH_ANIM_DURATION;
+
+    engine.update(dt);
+
+    // If engine just reset (transitioned from DEAD to PLAYING via reset()),
+    // override the ball position to respawn where we died
+    if (wasDead && wasNearEnd && engine.state === STATE.PLAYING) {
+      livesRef.current--;
+      if (livesRef.current <= 0) {
+        gameOverRef.current = true;
+        const mult = GEM_MULTIPLIER[difficulty] || 1;
+        const dist = Math.floor(maxYRef.current);
+        const gemsEarned = Math.floor(dist / 100) * mult + gemsCollectedRef.current;
+        Store.collectGems(gemsEarned);
+        onGameOver({ distance: dist, gems: gemsEarned, difficulty });
+        return;
       }
-      if (engine.deathTimer >= CONFIG.DEATH_ANIM_DURATION) {
-        livesRef.current--;
-        if (livesRef.current <= 0) {
-          gameOverRef.current = true;
-          const mult = GEM_MULTIPLIER[difficulty] || 1;
-          const dist = Math.floor(maxYRef.current);
-          const gemsEarned = Math.floor(dist / 100) * mult + gemsCollectedRef.current;
-          Store.collectGems(gemsEarned);
-          onGameOver({ distance: dist, gems: gemsEarned, difficulty });
-          return;
-        }
-        // Respawn exactly where died
-        const cx = (CONFIG.TUBE_INNER_LEFT + CONFIG.TUBE_INNER_RIGHT) / 2;
-        engine.ball.x = cx;
-        engine.ball.y = deathYRef.current;
-        engine.ball.vx = 0;
-        engine.ball.vy = 0;
-        engine.ball.alive = true;
-        engine.ball.rotation = 0;
-        engine.cameraY = Math.max(0, engine.ball.y - CONFIG.CANVAS_HEIGHT * CONFIG.CAMERA_BALL_RATIO);
-        engine.particles = [];
-        engine.deathTimer = 0;
-        engine.ridingElevator = null;
-        engine.state = STATE.PLAYING;
-      }
+      // Override reset position — respawn where died
+      const cx = (CONFIG.TUBE_INNER_LEFT + CONFIG.TUBE_INNER_RIGHT) / 2;
+      engine.ball.x = cx;
+      engine.ball.y = deathYRef.current;
+      engine.ball.vx = 0;
+      engine.ball.vy = 0;
+      engine.ball.rotation = 0;
+      engine.cameraY = Math.max(0, engine.ball.y - CONFIG.CANVAS_HEIGHT * CONFIG.CAMERA_BALL_RATIO);
+      engine.ridingElevator = null;
       return;
     }
 
+    // If still dead (animation playing), don't run rest of update
+    if (engine.state === STATE.DEAD) return;
     if (engine.state !== STATE.PLAYING) return;
 
     // Generate more obstacles ahead of ball
@@ -140,9 +145,6 @@ export default function InfinityGame({ difficulty, onGameOver, onExit }) {
     if (engine.ball.y > maxYRef.current) {
       maxYRef.current = engine.ball.y;
     }
-
-    // Run normal engine update
-    engine.update(dt);
   }, [engine, gen, paused, loading, difficulty, onGameOver]);
 
   const draw = useCallback(() => {
