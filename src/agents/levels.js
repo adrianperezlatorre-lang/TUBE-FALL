@@ -870,19 +870,19 @@ export const LEVELS = [
       { type: 'platform', y: 300, width: 110 },
       { type: 'spike', y: 420, wall: 'right', depth: 45 },
       // === MAGNET 1: pulls you RIGHT past left spikes ===
-      { type: 'magnet', y: 600, xPos: TR - 25, radius: 120, strength: 0.22 },
+      { type: 'magnet', y: 600, xPos: TR - 25, radius: 120, strength: 0.42 },
       { type: 'spike', y: 580, wall: 'left', depth: 90 },
       { type: 'spike', y: 680, wall: 'left', depth: 90 },
       // Safe on right side
       { type: 'platform', y: 820, width: 110 },
       // === MAGNET 2: pulls you LEFT past right spikes ===
-      { type: 'magnet', y: 1000, xPos: TL + 25, radius: 120, strength: 0.22 },
+      { type: 'magnet', y: 1000, xPos: TL + 25, radius: 120, strength: 0.42 },
       { type: 'spike', y: 980, wall: 'right', depth: 90 },
       { type: 'spike', y: 1080, wall: 'right', depth: 90 },
       // Safe on left side
       { type: 'platform', y: 1220, width: 110 },
       // === MAGNET 3: pulls you to center ===
-      { type: 'magnet', y: 1400, xPos: CX, radius: 100, strength: 0.2 },
+      { type: 'magnet', y: 1400, xPos: CX, radius: 100, strength: 0.4 },
       { type: 'spike', y: 1380, wall: 'left', depth: 70 },
       { type: 'spike', y: 1380, wall: 'right', depth: 70 },
       // Finish
@@ -1054,15 +1054,15 @@ export const LEVELS = [
       { type: 'platform', y: 460, width: 110 },
       // === MAGNET S-CURVE ===
       // Magnet 1 (right) pulls you right through gap in left spikes
-      { type: 'magnet', y: 650, xPos: TR - 20, radius: 140, strength: 0.22 },
+      { type: 'magnet', y: 650, xPos: TR - 20, radius: 140, strength: 0.42 },
       { type: 'spike', y: 620, wall: 'left', depth: 85 },
       { type: 'spike', y: 720, wall: 'left', depth: 85 },
       // Magnet 2 (left) pulls you left through gap in right spikes
-      { type: 'magnet', y: 880, xPos: TL + 20, radius: 140, strength: 0.22 },
+      { type: 'magnet', y: 880, xPos: TL + 20, radius: 140, strength: 0.42 },
       { type: 'spike', y: 850, wall: 'right', depth: 85 },
       { type: 'spike', y: 950, wall: 'right', depth: 85 },
       // Magnet 3 (right) pulls you right again
-      { type: 'magnet', y: 1110, xPos: TR - 20, radius: 140, strength: 0.22 },
+      { type: 'magnet', y: 1110, xPos: TR - 20, radius: 140, strength: 0.42 },
       { type: 'spike', y: 1080, wall: 'left', depth: 85 },
       { type: 'spike', y: 1180, wall: 'left', depth: 85 },
       // Safe zone
@@ -1158,7 +1158,7 @@ export const LEVELS = [
       // From platform, fall right
       { type: 'spike', y: 1050, wall: 'left', depth: 60 },
       // === STEP 4: MAGNET — curves you left through spike gap ===
-      { type: 'magnet', y: 1250, xPos: TL + 25, radius: 120, strength: 0.22 },
+      { type: 'magnet', y: 1250, xPos: TL + 25, radius: 120, strength: 0.42 },
       { type: 'spike', y: 1220, wall: 'right', depth: 85 },
       { type: 'spike', y: 1320, wall: 'right', depth: 85 },
       // === STEP 5: BOUNCE — launches you up to final platform ===
@@ -1237,17 +1237,17 @@ export const LEVELS = [
       { type: 'spike', y: 180, wall: 'left', depth: 45 },
       { type: 'blocker', y: 300, speed: 1.5, gapSide: 'center', width: 100 },
       // Magnet pulls right, spikes on left narrow the path
-      { type: 'magnet', y: 500, xPos: TR - 20, radius: 130, strength: 0.2 },
+      { type: 'magnet', y: 500, xPos: TR - 20, radius: 130, strength: 0.4 },
       { type: 'spike', y: 480, wall: 'left', depth: 75 },
       { type: 'spike', y: 580, wall: 'left', depth: 75 },
       // Magnet pulls left
-      { type: 'magnet', y: 750, xPos: TL + 20, radius: 130, strength: 0.2 },
+      { type: 'magnet', y: 750, xPos: TL + 20, radius: 130, strength: 0.4 },
       { type: 'spike', y: 730, wall: 'right', depth: 75 },
       { type: 'spike', y: 830, wall: 'right', depth: 75 },
       // Platform rest
       { type: 'platform', y: 980, width: 100 },
       // Magnet pulls toward tube entrance
-      { type: 'magnet', y: 1150, xPos: TL + 30, radius: 100, strength: 0.2 },
+      { type: 'magnet', y: 1150, xPos: TL + 30, radius: 100, strength: 0.4 },
       { type: 'spike', y: 1200, wall: 'right', depth: 70 },
       { type: 'tube', y: 1180, entryX: TL + 30, exitX: TR - 30, exitY: 1380 },
       { type: 'spike', y: 1250, wall: 'left', depth: 85 },
@@ -1284,11 +1284,11 @@ export const LEVELS = [
       // Fan zone with magnets guiding you through spike maze
       { type: 'fan', y: 900, fanHeight: 350, gravityMult: 0.2 },
       { type: 'spike', y: 600, wall: 'left', depth: 70 },
-      { type: 'magnet', y: 620, xPos: TR - 20, radius: 80, strength: 0.12 },
+      { type: 'magnet', y: 620, xPos: TR - 20, radius: 80, strength: 0.35 },
       { type: 'spike', y: 720, wall: 'right', depth: 70 },
-      { type: 'magnet', y: 740, xPos: TL + 20, radius: 80, strength: 0.12 },
+      { type: 'magnet', y: 740, xPos: TL + 20, radius: 80, strength: 0.35 },
       { type: 'spike', y: 840, wall: 'left', depth: 70 },
-      { type: 'magnet', y: 860, xPos: TR - 20, radius: 80, strength: 0.12 },
+      { type: 'magnet', y: 860, xPos: TR - 20, radius: 80, strength: 0.35 },
       // After fan zone
       { type: 'platform', y: 1050, width: 100 },
       { type: 'spike', y: 1200, wall: 'both', depth: 40 },
@@ -1499,12 +1499,12 @@ export const LEVELS = [
       { type: 'spike', y: 500, wall: 'right', depth: 55 },
       // Trampoline on left, magnet pulls you to platform on right
       { type: 'trampoline', y: 750, width: 80, xPos: TL + 10 },
-      { type: 'magnet', y: 580, xPos: TR - 30, radius: 100, strength: 0.15 },
+      { type: 'magnet', y: 580, xPos: TR - 30, radius: 100, strength: 0.38 },
       { type: 'platform', y: 560, width: 80, xPos: TR - 90 },
       { type: 'spike', y: 650, wall: 'left', depth: 75 },
       // Trampoline on right, magnet pulls to left platform
       { type: 'trampoline', y: 1000, width: 80, xPos: TR - 90 },
-      { type: 'magnet', y: 830, xPos: TL + 30, radius: 100, strength: 0.15 },
+      { type: 'magnet', y: 830, xPos: TL + 30, radius: 100, strength: 0.38 },
       { type: 'platform', y: 810, width: 80, xPos: TL + 10 },
       { type: 'spike', y: 900, wall: 'right', depth: 75 },
       // Third trampoline with tube exit
@@ -1597,13 +1597,13 @@ export const LEVELS = [
       { type: 'spike', y: 350, wall: 'left', depth: 55 },
       { type: 'pendulum', y: 500, swingSpeed: 2.5 },
       // Magnet vortex section — 3 magnets guide you through spike maze
-      { type: 'magnet', y: 700, xPos: TR - 20, radius: 130, strength: 0.22 },
+      { type: 'magnet', y: 700, xPos: TR - 20, radius: 130, strength: 0.42 },
       { type: 'spike', y: 680, wall: 'left', depth: 80 },
       { type: 'spike', y: 780, wall: 'left', depth: 80 },
-      { type: 'magnet', y: 920, xPos: TL + 20, radius: 130, strength: 0.22 },
+      { type: 'magnet', y: 920, xPos: TL + 20, radius: 130, strength: 0.42 },
       { type: 'spike', y: 900, wall: 'right', depth: 80 },
       { type: 'spike', y: 1000, wall: 'right', depth: 80 },
-      { type: 'magnet', y: 1140, xPos: TR - 20, radius: 130, strength: 0.22 },
+      { type: 'magnet', y: 1140, xPos: TR - 20, radius: 130, strength: 0.42 },
       { type: 'spike', y: 1120, wall: 'left', depth: 80 },
       { type: 'spike', y: 1220, wall: 'left', depth: 80 },
       // Rest platform
@@ -1697,14 +1697,14 @@ export const LEVELS = [
       { type: 'pendulum', y: 300, swingSpeed: 2.5 },
       { type: 'spike', y: 450, wall: 'right', depth: 55 },
       // Magnet pulls you onto trampoline
-      { type: 'magnet', y: 700, xPos: TL + 30, radius: 110, strength: 0.18 },
+      { type: 'magnet', y: 700, xPos: TL + 30, radius: 110, strength: 0.4 },
       { type: 'trampoline', y: 720, width: 80, xPos: TL + 10 },
       { type: 'spike', y: 650, wall: 'right', depth: 70 },
       // Trampoline bounces to right platform
       { type: 'platform', y: 550, width: 80, xPos: TR - 90 },
       { type: 'spike', y: 620, wall: 'left', depth: 75 },
       // Second magnet-trampoline
-      { type: 'magnet', y: 960, xPos: TR - 30, radius: 110, strength: 0.18 },
+      { type: 'magnet', y: 960, xPos: TR - 30, radius: 110, strength: 0.4 },
       { type: 'trampoline', y: 980, width: 80, xPos: TR - 90 },
       { type: 'spike', y: 910, wall: 'left', depth: 70 },
       { type: 'platform', y: 810, width: 80, xPos: TL + 10 },
@@ -1868,7 +1868,7 @@ export const LEVELS = [
       { type: 'tube', y: 780, entryX: TL + 25, exitX: CX, exitY: 980 },
       { type: 'spike', y: 790, wall: 'right', depth: 80 },
       // Magnet pulls toward trampoline
-      { type: 'magnet', y: 1100, xPos: TL + 30, radius: 100, strength: 0.18 },
+      { type: 'magnet', y: 1100, xPos: TL + 30, radius: 100, strength: 0.4 },
       { type: 'trampoline', y: 1130, width: 80, xPos: TL + 10 },
       { type: 'spike', y: 1050, wall: 'right', depth: 70 },
       // Trampoline bounces to high platform
@@ -1920,13 +1920,13 @@ export const LEVELS = [
       { type: 'pendulum', y: 350, swingSpeed: 3.0 },
       { type: 'spike', y: 500, wall: 'right', depth: 55 },
       // Magnet pulls into tube
-      { type: 'magnet', y: 700, xPos: TL + 25, radius: 120, strength: 0.2 },
+      { type: 'magnet', y: 700, xPos: TL + 25, radius: 120, strength: 0.4 },
       { type: 'spike', y: 680, wall: 'right', depth: 75 },
       { type: 'tube', y: 730, entryX: TL + 25, exitX: TR - 25, exitY: 930 },
       { type: 'spike', y: 780, wall: 'left', depth: 90 },
       { type: 'spike', y: 780, wall: 'right', depth: 90 },
       // Magnet pulls into second tube
-      { type: 'magnet', y: 1050, xPos: TR - 25, radius: 120, strength: 0.2 },
+      { type: 'magnet', y: 1050, xPos: TR - 25, radius: 120, strength: 0.4 },
       { type: 'spike', y: 1030, wall: 'left', depth: 75 },
       { type: 'tube', y: 1080, entryX: TR - 25, exitX: TL + 25, exitY: 1280 },
       { type: 'spike', y: 1130, wall: 'left', depth: 90 },
@@ -1996,9 +1996,9 @@ export const LEVELS = [
       // Fan section with magnet
       { type: 'fan', y: 2350, fanHeight: 300, gravityMult: 0.2 },
       { type: 'spike', y: 2100, wall: 'right', depth: 70 },
-      { type: 'magnet', y: 2120, xPos: TL + 25, radius: 90, strength: 0.15 },
+      { type: 'magnet', y: 2120, xPos: TL + 25, radius: 90, strength: 0.38 },
       { type: 'spike', y: 2200, wall: 'left', depth: 70 },
-      { type: 'magnet', y: 2220, xPos: TR - 25, radius: 90, strength: 0.15 },
+      { type: 'magnet', y: 2220, xPos: TR - 25, radius: 90, strength: 0.38 },
       { type: 'spike', y: 2300, wall: 'right', depth: 70 },
       // Final stretch
       { type: 'platform', y: 2500, width: 100 },
@@ -2034,13 +2034,13 @@ export const LEVELS = [
       { type: 'spike', y: 350, wall: 'left', depth: 55 },
       { type: 'pendulum', y: 500, swingSpeed: 3.0 },
       // Magnet zigzag — each magnet pulls you through the safe gap
-      { type: 'magnet', y: 700, xPos: TR - 20, radius: 140, strength: 0.22 },
+      { type: 'magnet', y: 700, xPos: TR - 20, radius: 140, strength: 0.42 },
       { type: 'spike', y: 680, wall: 'left', depth: 85 },
-      { type: 'magnet', y: 880, xPos: TL + 20, radius: 140, strength: 0.22 },
+      { type: 'magnet', y: 880, xPos: TL + 20, radius: 140, strength: 0.42 },
       { type: 'spike', y: 860, wall: 'right', depth: 85 },
-      { type: 'magnet', y: 1060, xPos: TR - 20, radius: 140, strength: 0.22 },
+      { type: 'magnet', y: 1060, xPos: TR - 20, radius: 140, strength: 0.42 },
       { type: 'spike', y: 1040, wall: 'left', depth: 85 },
-      { type: 'magnet', y: 1240, xPos: TL + 20, radius: 140, strength: 0.22 },
+      { type: 'magnet', y: 1240, xPos: TL + 20, radius: 140, strength: 0.42 },
       { type: 'spike', y: 1220, wall: 'right', depth: 85 },
       // Platform rest
       { type: 'platform', y: 1400, width: 100 },
@@ -2100,7 +2100,7 @@ export const LEVELS = [
       { type: 'tube', y: 930, entryX: TL + 25, exitX: TR - 25, exitY: 1130 },
       { type: 'spike', y: 940, wall: 'right', depth: 85 },
       // MAGNET pulls toward trampoline
-      { type: 'magnet', y: 1250, xPos: TL + 25, radius: 110, strength: 0.2 },
+      { type: 'magnet', y: 1250, xPos: TL + 25, radius: 110, strength: 0.4 },
       { type: 'spike', y: 1200, wall: 'right', depth: 70 },
       // TRAMPOLINE bounces to high platform
       { type: 'trampoline', y: 1280, width: 80, xPos: TL + 10 },
@@ -2122,9 +2122,9 @@ export const LEVELS = [
       // Fan + magnet combo
       { type: 'fan', y: 2750, fanHeight: 300, gravityMult: 0.2 },
       { type: 'spike', y: 2500, wall: 'left', depth: 70 },
-      { type: 'magnet', y: 2520, xPos: TR - 20, radius: 90, strength: 0.15 },
+      { type: 'magnet', y: 2520, xPos: TR - 20, radius: 90, strength: 0.38 },
       { type: 'spike', y: 2600, wall: 'right', depth: 70 },
-      { type: 'magnet', y: 2620, xPos: TL + 20, radius: 90, strength: 0.15 },
+      { type: 'magnet', y: 2620, xPos: TL + 20, radius: 90, strength: 0.38 },
       { type: 'spike', y: 2700, wall: 'left', depth: 70 },
       // Final
       { type: 'blocker', y: 2900, speed: 2.5, gapSide: 'center', width: 100 },
@@ -2159,9 +2159,9 @@ export const LEVELS = [
       { type: 'pendulum', y: 350, swingSpeed: 3.2 },
       { type: 'spike', y: 500, wall: 'both', depth: 50 },
       // Magnet vortex opening
-      { type: 'magnet', y: 700, xPos: TR - 20, radius: 130, strength: 0.22 },
+      { type: 'magnet', y: 700, xPos: TR - 20, radius: 130, strength: 0.42 },
       { type: 'spike', y: 680, wall: 'left', depth: 80 },
-      { type: 'magnet', y: 880, xPos: TL + 20, radius: 130, strength: 0.22 },
+      { type: 'magnet', y: 880, xPos: TL + 20, radius: 130, strength: 0.42 },
       { type: 'spike', y: 860, wall: 'right', depth: 80 },
       // Fan corridor
       { type: 'fan', y: 1350, fanHeight: 350, gravityMult: 0.18 },
@@ -2192,11 +2192,11 @@ export const LEVELS = [
       // Fan + Magnet finale
       { type: 'fan', y: 3200, fanHeight: 350, gravityMult: 0.18 },
       { type: 'spike', y: 2900, wall: 'left', depth: 75 },
-      { type: 'magnet', y: 2920, xPos: TR - 20, radius: 90, strength: 0.15 },
+      { type: 'magnet', y: 2920, xPos: TR - 20, radius: 90, strength: 0.38 },
       { type: 'spike', y: 3000, wall: 'right', depth: 75 },
-      { type: 'magnet', y: 3020, xPos: TL + 20, radius: 90, strength: 0.15 },
+      { type: 'magnet', y: 3020, xPos: TL + 20, radius: 90, strength: 0.38 },
       { type: 'spike', y: 3100, wall: 'left', depth: 75 },
-      { type: 'magnet', y: 3120, xPos: TR - 20, radius: 90, strength: 0.15 },
+      { type: 'magnet', y: 3120, xPos: TR - 20, radius: 90, strength: 0.38 },
       // Final gauntlet
       { type: 'blocker', y: 3350, speed: 2.8, gapSide: 'center', width: 100 },
       { type: 'pendulum', y: 3500, swingSpeed: 3.5 },

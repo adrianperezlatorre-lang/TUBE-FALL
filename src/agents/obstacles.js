@@ -222,7 +222,7 @@ export class ObstacleManager {
     obs.magX = obs.xPos !== undefined ? obs.xPos : CX;
     obs.magY = obs.y;
     obs.magRadius = obs.radius || 80;
-    obs.magStrength = obs.strength || 0.15;
+    obs.magStrength = obs.strength || 0.4;
     obs._animPhase = 0;
     return obs;
   }
