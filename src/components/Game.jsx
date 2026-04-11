@@ -225,7 +225,7 @@ export default function Game({ levelId, onLevelComplete, onExit, onHelp }) {
           {onHelp && (
             <button
               onClick={() => {
-                setPaused(false);
+                // Keep game paused, launch tutorial on top
                 onHelp();
               }}
               style={{ ...pauseMenuBtn, marginTop: '12px', backgroundColor: '#74B9FF', color: '#000' }}

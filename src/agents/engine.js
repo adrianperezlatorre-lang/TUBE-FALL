@@ -703,7 +703,7 @@ export class GameEngine {
     if (!this.level) return;
 
     // Level number pill - top center
-    const levelText = `LEVEL ${this.level.id}`;
+    const levelText = this.level.id === 900 ? 'TUTORIAL' : this.level.id >= 101 ? `TRIAL ${this.level.id - 100}` : `LEVEL ${this.level.id}`;
     ctx.font = 'bold 16px monospace';
     const textW = ctx.measureText(levelText).width;
     const pillW = textW + 20;
