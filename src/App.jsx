@@ -122,6 +122,11 @@ export default function App() {
           onOpenInfinity={() => setView(VIEW.INFINITY_SELECT)}
           onOpenLeaderboard={() => setLeaderboardOpen(true)}
           onOpenAccount={() => setAccountOpen(true)}
+          onSubmitGems={(gems) => setShowScoreSubmit({
+            category: 'gems',
+            score: gems,
+            options: {},
+          })}
         />
       )}
 

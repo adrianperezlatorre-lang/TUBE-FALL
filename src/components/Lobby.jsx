@@ -12,7 +12,7 @@ import { LEVELS } from '../agents/levels.js';
  * @param {Function} props.onPlay - Called with levelId when user taps play
  * @param {Function} props.onOpenShop - Opens shop overlay
  */
-export default function Lobby({ onPlay, onOpenShop, onOpenTimeTrial, onOpenInfinity, onOpenLeaderboard, onOpenAccount }) {
+export default function Lobby({ onPlay, onOpenShop, onOpenTimeTrial, onOpenInfinity, onOpenLeaderboard, onOpenAccount, onSubmitGems }) {
   const [state, setState] = useState(Store.getState());
 
   useEffect(() => {
@@ -61,6 +61,23 @@ export default function Lobby({ onPlay, onOpenShop, onOpenTimeTrial, onOpenInfin
           }}>
             ◆ {gems}
           </div>
+          <button
+            onClick={() => onSubmitGems(gems)}
+            style={{
+              background: '#FFD700',
+              color: '#000',
+              border: 'none',
+              padding: '4px 6px',
+              borderRadius: '6px',
+              fontSize: '10px',
+              cursor: 'pointer',
+              fontFamily: 'monospace',
+              fontWeight: 'bold',
+            }}
+            title="Submit gems to leaderboard"
+          >
+            👑
+          </button>
           <button
             onClick={onOpenShop}
             style={{
