@@ -6,7 +6,7 @@
 export const CONFIG = {
   GRAVITY: 0.35,
   TERMINAL_VELOCITY: 8,
-  JUMP_VX: 5,
+  JUMP_VX: 3.33,
   JUMP_VY: -7,
   TUBE_WIDTH: 280,
   WALL_THICKNESS: 20, // Thick bold walls
