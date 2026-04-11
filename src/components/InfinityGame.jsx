@@ -104,10 +104,10 @@ export default function InfinityGame({ difficulty, onGameOver, onExit }) {
           onGameOver({ distance: dist, gems: gemsEarned, difficulty });
           return;
         }
-        // Respawn near where died
+        // Respawn exactly where died
         const cx = (CONFIG.TUBE_INNER_LEFT + CONFIG.TUBE_INNER_RIGHT) / 2;
         engine.ball.x = cx;
-        engine.ball.y = Math.max(60, deathYRef.current - 120);
+        engine.ball.y = deathYRef.current;
         engine.ball.vx = 0;
         engine.ball.vy = 0;
         engine.ball.alive = true;
