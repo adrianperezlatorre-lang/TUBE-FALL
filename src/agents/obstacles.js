@@ -330,7 +330,23 @@ export class ObstacleManager {
   getActive(ballY) {
     const margin = 400;
     return this.obstacles.filter(obs => {
-      const obsY = obs.currentY || obs.fanY || obs.y;
+      if (obs.type === 'fan') {
+        // Fan zone extends from (fanY - fanHeight) to fanY
+        const top = obs.fanY - obs.fanHeight;
+        const bot = obs.fanY;
+        return ballY > top - margin && ballY < bot + margin;
+      }
+      if (obs.type === 'tube') {
+        // Tube spans from entryY to exitY
+        const top = Math.min(obs.entryY, obs.exitY);
+        const bot = Math.max(obs.entryY, obs.exitY);
+        return ballY > top - margin && ballY < bot + margin;
+      }
+      if (obs.type === 'magnet') {
+        // Magnet has a radius of influence
+        return Math.abs(obs.magY - ballY) < obs.magRadius + margin;
+      }
+      const obsY = obs.currentY || obs.y;
       return Math.abs(obsY - ballY) < margin;
     });
   }
