@@ -279,6 +279,15 @@ export class GameEngine {
         ball.vx *= 0.96; // light drag while rolling
       }
     } else {
+      // In low gravity: holding direction = continuous fast movement
+      if (this.isInLowGravity()) {
+        const accel = 1.2;
+        if (heldDirection.left) ball.vx -= accel;
+        if (heldDirection.right) ball.vx += accel;
+        const maxSpeed = 8;
+        if (ball.vx > maxSpeed) ball.vx = maxSpeed;
+        if (ball.vx < -maxSpeed) ball.vx = -maxSpeed;
+      }
       ball.x += ball.vx;
       ball.y += ball.vy;
     }
