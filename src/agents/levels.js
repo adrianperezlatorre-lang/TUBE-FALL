@@ -1871,8 +1871,6 @@ export const LEVELS = [
       { type: 'spike', y: 1020, wall: 'left', depth: 75 },
       // From platform, fall to bounce
       { type: 'bounce', y: 1350, width: 80, factor: 1.5 },
-      { type: 'spike', y: 1400, wall: 'left', depth: 85 },
-      { type: 'spike', y: 1400, wall: 'right', depth: 85 },
       { type: 'platform', y: 1200, width: 80, xPos: CX - 40 },
       // Continue through mixed section
       { type: 'platform', y: 1550, width: 100 },
