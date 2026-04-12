@@ -1693,7 +1693,6 @@ export const LEVELS = [
     gems: 9,
     bonusGems: 5,
     obstacles: [
-      { type: 'spike', y: 180, wall: 'left', depth: 50 },
       { type: 'pendulum', y: 300, swingSpeed: 2.5 },
       { type: 'spike', y: 450, wall: 'right', depth: 55 },
       // Magnet pulls you onto trampoline
