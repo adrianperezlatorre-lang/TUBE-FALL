@@ -1701,7 +1701,6 @@ export const LEVELS = [
       { type: 'spike', y: 650, wall: 'right', depth: 70 },
       // Trampoline bounces to right platform
       { type: 'platform', y: 550, width: 80, xPos: TR - 90 },
-      { type: 'spike', y: 620, wall: 'left', depth: 75 },
       // Second magnet-trampoline
       { type: 'magnet', y: 960, xPos: TR - 30, radius: 110, strength: 0.4 },
       { type: 'trampoline', y: 980, width: 80, xPos: TR - 90 },
