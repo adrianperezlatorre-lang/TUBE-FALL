@@ -1865,10 +1865,8 @@ export const LEVELS = [
       // Magnet pulls toward trampoline
       { type: 'magnet', y: 1100, xPos: TL + 30, radius: 100, strength: 0.4 },
       { type: 'trampoline', y: 1130, width: 80, xPos: TL + 10 },
-      { type: 'spike', y: 1050, wall: 'right', depth: 70 },
       // Trampoline bounces to high platform
       { type: 'platform', y: 950, width: 80, xPos: TR - 90 },
-      { type: 'spike', y: 1020, wall: 'left', depth: 75 },
       // From platform, fall to bounce
       { type: 'bounce', y: 1350, width: 80, factor: 1.5 },
       { type: 'platform', y: 1200, width: 80, xPos: CX - 40 },
