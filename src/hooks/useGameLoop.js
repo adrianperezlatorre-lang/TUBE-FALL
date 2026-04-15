@@ -1,13 +1,13 @@
 /**
  * useGameLoop — Game loop with fixed timestep.
- * Uses requestAnimationFrame when available, falls back to setInterval.
- * Also uses setInterval as a backup to ensure updates run even in
- * background tabs where RAF is throttled.
+ * Uses requestAnimationFrame only. The fixed timestep accumulator
+ * guarantees identical physics on all devices regardless of refresh rate.
  */
 
 import { useRef, useEffect, useCallback } from 'react';
 
 const FIXED_DT = 16.67;
+const MAX_STEPS_PER_FRAME = 4; // prevent spiral of death
 
 /**
  * @param {Function} updateFn - Called each fixed timestep (16.67ms)
@@ -16,7 +16,6 @@ const FIXED_DT = 16.67;
  */
 export function useGameLoop(updateFn, drawFn, running) {
   const rafRef = useRef(null);
-  const intervalRef = useRef(null);
   const lastTimeRef = useRef(0);
   const accumulatorRef = useRef(0);
   const updateRef = useRef(updateFn);
@@ -25,8 +24,7 @@ export function useGameLoop(updateFn, drawFn, running) {
   updateRef.current = updateFn;
   drawRef.current = drawFn;
 
-  const tick = useCallback(() => {
-    const now = performance.now();
+  const tick = useCallback((now) => {
     if (lastTimeRef.current === 0) {
       lastTimeRef.current = now;
     }
@@ -34,22 +32,27 @@ export function useGameLoop(updateFn, drawFn, running) {
     let dt = now - lastTimeRef.current;
     lastTimeRef.current = now;
 
-    // Clamp large dt (e.g. tab was hidden)
-    if (dt > 100) dt = FIXED_DT;
+    // Clamp large dt (e.g. tab was hidden or resumed)
+    if (dt > 200) dt = FIXED_DT;
 
     accumulatorRef.current += dt;
 
-    // Cap accumulated updates to prevent spiral of death
-    if (accumulatorRef.current > FIXED_DT * 5) {
-      accumulatorRef.current = FIXED_DT * 2;
-    }
-
-    while (accumulatorRef.current >= FIXED_DT) {
+    // Run fixed-step updates (capped to prevent spiral of death)
+    let steps = 0;
+    while (accumulatorRef.current >= FIXED_DT && steps < MAX_STEPS_PER_FRAME) {
       updateRef.current(FIXED_DT);
       accumulatorRef.current -= FIXED_DT;
+      steps++;
+    }
+
+    // If we hit the cap, discard remaining time to prevent catching up
+    if (steps >= MAX_STEPS_PER_FRAME) {
+      accumulatorRef.current = 0;
     }
 
     drawRef.current();
+
+    rafRef.current = requestAnimationFrame(tick);
   }, []);
 
   useEffect(() => {
@@ -58,26 +61,12 @@ export function useGameLoop(updateFn, drawFn, running) {
     lastTimeRef.current = 0;
     accumulatorRef.current = 0;
 
-    // Use both RAF and setInterval for robustness
-    // RAF provides smooth rendering, setInterval ensures updates run
-    // even when RAF is throttled (background tabs)
-    function rafLoop() {
-      tick();
-      rafRef.current = requestAnimationFrame(rafLoop);
-    }
-    rafRef.current = requestAnimationFrame(rafLoop);
-
-    // Backup interval ensures the game runs even if RAF is paused
-    intervalRef.current = setInterval(tick, FIXED_DT);
+    rafRef.current = requestAnimationFrame(tick);
 
     return () => {
       if (rafRef.current) {
         cancelAnimationFrame(rafRef.current);
         rafRef.current = null;
-      }
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
       }
     };
   }, [running, tick]);

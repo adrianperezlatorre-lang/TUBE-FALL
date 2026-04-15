@@ -246,9 +246,12 @@ export class GameEngine {
       }
     }
 
+    // Normalize dt so physics is identical on all devices
+    const s = dt / 16.67; // scale factor (1.0 at 60fps step)
+
     // Apply gravity (with fall speed modifier + low gravity zone)
     if (!this.ridingElevator) {
-      ball.vy += CONFIG.GRAVITY * this.fallSpeedMultiplier * gravMult;
+      ball.vy += CONFIG.GRAVITY * this.fallSpeedMultiplier * gravMult * s;
       const termVel = CONFIG.TERMINAL_VELOCITY * this.fallSpeedMultiplier * gravMult;
       if (ball.vy > termVel) {
         ball.vy = termVel;
@@ -263,7 +266,7 @@ export class GameEngine {
       ball.vy = elev.vy || 0;
 
       // Continuous rolling force while direction is held
-      const rollAccel = 0.6;
+      const rollAccel = 0.6 * s;
       if (heldDirection.left) ball.vx -= rollAccel;
       if (heldDirection.right) ball.vx += rollAccel;
       // Cap roll speed
@@ -271,28 +274,28 @@ export class GameEngine {
       if (ball.vx > maxRoll) ball.vx = maxRoll;
       if (ball.vx < -maxRoll) ball.vx = -maxRoll;
 
-      ball.x += ball.vx;
+      ball.x += ball.vx * s;
       // Rolling rotation based on horizontal movement
-      ball.rotation += ball.vx * 0.08;
+      ball.rotation += ball.vx * 0.08 * s;
       // Only apply friction when NOT holding a direction
       if (!heldDirection.left && !heldDirection.right) {
-        ball.vx *= 0.88;
+        ball.vx *= Math.pow(0.88, s);
         if (Math.abs(ball.vx) < 0.1) ball.vx = 0;
       } else {
-        ball.vx *= 0.96; // light drag while rolling
+        ball.vx *= Math.pow(0.96, s); // light drag while rolling
       }
     } else {
       // In low gravity: gentle continuous drift (8x less than normal)
       if (this.isInLowGravity()) {
-        const accel = 0.15;
+        const accel = 0.15 * s;
         if (heldDirection.left) ball.vx -= accel;
         if (heldDirection.right) ball.vx += accel;
         const maxSpeed = 2;
         if (ball.vx > maxSpeed) ball.vx = maxSpeed;
         if (ball.vx < -maxSpeed) ball.vx = -maxSpeed;
       }
-      ball.x += ball.vx;
-      ball.y += ball.vy;
+      ball.x += ball.vx * s;
+      ball.y += ball.vy * s;
     }
 
     // Wall bounces
@@ -306,7 +309,7 @@ export class GameEngine {
     }
 
     // Air friction on vx — less friction in low gravity zones
-    ball.vx *= this.isInLowGravity() ? 0.995 : 0.98;
+    ball.vx *= Math.pow(this.isInLowGravity() ? 0.995 : 0.98, s);
 
     // Update trail particles
     if (ball.alive) {
